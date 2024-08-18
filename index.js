@@ -1,4 +1,4 @@
-import durenchat from './dist/durenchat/durendal.js';
+import durenchat from './dist/durenchat/index.js';
 
 const chat = durenchat('#durenchat', {
   users: [{
@@ -7,7 +7,6 @@ const chat = durenchat('#durenchat', {
   }],
 
   self: 2,
-  identifier: true,
 });
 
 chat.addUser({

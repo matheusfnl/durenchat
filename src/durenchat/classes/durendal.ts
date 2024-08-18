@@ -1,10 +1,12 @@
-import { Chat, Message, User } from './types';
+import { Chat, Message, User } from '../utills/types.js';
+import { _handleIdentifier } from '../utills/functions.js';
 
 class Durenchat {
   element: HTMLElement | Element;
   chat_container: HTMLElement | Element;
   self: string | number;
   users: User[] = [];
+  identifier: boolean | Function = false;
 
   constructor(
     id: string | number,
@@ -19,6 +21,10 @@ class Durenchat {
       }
 
       this.users = chat.users;
+    }
+
+    if (chat.identifier) {
+      this.identifier = chat.identifier;
     }
 
     if (!this.element) {
@@ -49,8 +55,10 @@ class Durenchat {
     const chat_message_div = document.createElement('div');
     chat_message_div.classList.add('chat-message');
 
+    _handleIdentifier(this, chat_message_div, message);
+
     const message_p = document.createElement('span');
-    message_p.innerHTML = message.text;
+    message_p.textContent = message.text;
 
     chat_message_div.appendChild(message_p);
     chat_message_container_div.appendChild(chat_message_div);
@@ -64,9 +72,4 @@ class Durenchat {
   }
 };
 
-export default function(
-  id: string | number,
-  chat: Chat,
-) {
-  return new Durenchat(id, chat);
-}
+export default Durenchat;

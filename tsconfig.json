@@ -6,7 +6,11 @@
     "rootDir": "./src",
     "strict": true,
     "esModuleInterop": true,
-    "lib": ["es6", "dom", "es2016"],
+    "moduleResolution": "node",
+    "lib": [
+      "ESNext",
+      "dom"
+    ],
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*"],
 }

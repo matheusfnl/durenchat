@@ -2,7 +2,6 @@ export interface Chat {
   users: User[];
   self: number;
   identifier: boolean | Function;
-  class_prefix: string;
 }
 
 export interface Message {
