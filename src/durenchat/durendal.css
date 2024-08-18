@@ -1,0 +1,20 @@
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.chat-message-container {
+  display: flex;
+}
+
+.chat-message-container.from-me {
+  justify-content: flex-end;
+}
+
+.chat-message {
+  border-radius: 20px;
+  padding: 20px;
+  background-color: rgb(96, 170, 255);
+  color: white;
+}
