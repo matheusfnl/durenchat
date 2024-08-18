@@ -8,7 +8,6 @@ const chat = durenchat('#durenchat', {
 
   self: 2,
   identifier: true,
-  class_prefix: 'teste',
 });
 
 chat.addUser({

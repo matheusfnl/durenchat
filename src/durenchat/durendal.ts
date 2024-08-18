@@ -5,7 +5,6 @@ class Durenchat {
   chat_container: HTMLElement | Element;
   self: string | number;
   users: User[] = [];
-  class_prefix: string = '';
 
   constructor(
     id: string | number,
@@ -13,10 +12,6 @@ class Durenchat {
   ) {
     this.self = chat.self;
     this.element = document.querySelector(`${id}`) as HTMLElement | Element;
-
-    if (chat.class_prefix) {
-      this.class_prefix = chat.class_prefix;
-    }
 
     if (chat.users) {
       if (! chat.users.length) {
@@ -32,7 +27,7 @@ class Durenchat {
 
     const chat_container = document.createElement('div');
     chat_container.id = 'chatContainer';
-    chat_container.classList.add(this._class('chat-container'));
+    chat_container.classList.add('chat-container');
 
     this.element.appendChild(chat_container);
     this.chat_container = chat_container;
@@ -45,14 +40,14 @@ class Durenchat {
     }
 
     const chat_message_container_div = document.createElement('div');
-    chat_message_container_div.classList.add(this._class('chat-message-container'));
+    chat_message_container_div.classList.add('chat-message-container');
 
     if (message.origin === this.self) {
-      chat_message_container_div.classList.add(this._class('from-me'));
+      chat_message_container_div.classList.add('from-me');
     }
 
     const chat_message_div = document.createElement('div');
-    chat_message_div.classList.add(this._class('chat-message'));
+    chat_message_div.classList.add('chat-message');
 
     const message_p = document.createElement('span');
     message_p.innerHTML = message.text;
@@ -66,10 +61,6 @@ class Durenchat {
   // Add a new user to the chat
   addUser(user: User) {
     this.users.push(user);
-  }
-
-  _class(name: string): string {
-    return `${this.class_prefix}-${name}`;
   }
 };
 
