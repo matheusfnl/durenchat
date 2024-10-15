@@ -1,75 +1,65 @@
-import { Chat, Message, User } from '../utills/types.js';
-import { _handleIdentifier } from '../utills/functions.js';
+import { Chat, MessageConfig, UserConstructor } from "../utills/types.js";
+import { Message } from './message.js';
+import { User } from './user.js';
 
 class Durenchat {
   element: HTMLElement | Element;
-  chat_container: HTMLElement | Element;
-  self: string | number;
+  self: User | null = null
   users: User[] = [];
-  identifier: boolean | Function = false;
+  messages: Message[] = [];
 
-  constructor(
-    id: string | number,
-    chat: Chat,
-  ) {
-    this.self = chat.self;
+  constructor(id: string | number, chat: Chat) {
     this.element = document.querySelector(`${id}`) as HTMLElement | Element;
-
-    if (chat.users) {
-      if (! chat.users.length) {
-        throw new Error(`An empty user array was provided`);
-      }
-
-      this.users = chat.users;
-    }
-
-    if (chat.identifier) {
-      this.identifier = chat.identifier;
-    }
 
     if (!this.element) {
       throw new Error(`Element with the selector ${id} not found`);
     }
 
-    const chat_container = document.createElement('div');
-    chat_container.id = 'chatContainer';
-    chat_container.classList.add('chat-container');
-
-    this.element.appendChild(chat_container);
-    this.chat_container = chat_container;
-  }
-
-  // Send a new message to the chat
-  sendMessage(message: Message) {
-    if (! this.users.find(user => user.id === message.origin)) {
-      throw new Error(`Origin ${message.origin} was not found`);
+    if (chat.users && chat.users.length) {
+      this.users = chat.users.map(user => new User(user));
+    } else {
+      throw new Error(`An empty user array was provided`);
     }
 
-    const chat_message_container_div = document.createElement('div');
-    chat_message_container_div.classList.add('chat-message-container');
+    if (chat.self) {
+      this.self = this.getUser(chat.self);
+    }
+  }
 
-    if (message.origin === this.self) {
-      chat_message_container_div.classList.add('from-me');
+  // Users
+  getUser(id: string | number): User {
+    const user = this.users.find(user => user.id === id);
+    if (!user) {
+      throw new Error(`User not found`);
     }
 
-    const chat_message_div = document.createElement('div');
-    chat_message_div.classList.add('chat-message');
-
-    _handleIdentifier(this, chat_message_div, message);
-
-    const message_p = document.createElement('span');
-    message_p.textContent = message.text;
-
-    chat_message_div.appendChild(message_p);
-    chat_message_container_div.appendChild(chat_message_div);
-
-    this.chat_container.appendChild(chat_message_container_div);
+    return user;
   }
 
-  // Add a new user to the chat
-  addUser(user: User) {
-    this.users.push(user);
+  addUser(user: UserConstructor): User {
+    const new_user = new User(user);
+    this.users.push(new_user);
+
+    return new_user;
   }
-};
+
+  updateUser(user: UserConstructor) {
+    const selected_user = this.getUser(user.id);
+    selected_user.updateUser(user);
+  }
+
+  // Message
+  sendMessage(message: MessageConfig): Message {
+    const user = this.getUser(message.sender);
+    const new_message = new Message({
+      ...message,
+      sender: user,
+    });
+
+    this.messages.push(new_message);
+
+    return new_message;
+  }
+}
 
 export default Durenchat;

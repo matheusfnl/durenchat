@@ -4,6 +4,7 @@ const chat = durenchat('#durenchat', {
   users: [{
     id: 2,
     name: 'Matheus',
+    color: '#ccffee',
   }],
 
   self: 2,
@@ -12,15 +13,41 @@ const chat = durenchat('#durenchat', {
 chat.addUser({
   id: 1,
   name: 'Oliver',
+  color: '#ffb8f5'
 });
 
 chat.sendMessage({
-  text: 'Olá',
-  origin: 1,
+  content: 'Olá',
+  sender: 1,
 });
 
 chat.sendMessage({
-  text: 'Olá, td bem?',
-  origin: 2,
+  content: 'Olá, td bem?',
+  sender: 2,
 });
 
+chat.sendMessage({
+  content: 'Como vai',
+  sender: 2,
+});
+
+chat.sendMessage({
+  content: 'Bem!',
+  sender: 1,
+});
+
+
+chat.updateUser({
+  id: 1,
+  name: 'Oliver 2222',
+  color: '#ffb8f5'
+});
+
+chat.updateUser({
+  id: 2,
+  name: 'Matheus Cleber',
+  color: '#ffb8f5'
+});
+
+
+console.log(chat);

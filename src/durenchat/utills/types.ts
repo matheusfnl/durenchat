@@ -1,16 +1,28 @@
+import { User } from '../classes/user.js';
+
 export interface Chat {
-  users: User[];
   self: number;
-  identifier: boolean | Function;
+  users: UserConstructor[];
+  messages: MessageConstructor[];
 }
 
-export interface Message {
-  text: string;
-  origin: string | number;
-  identifier: boolean | Function;
+export interface MessageConstructor {
+  sender: User;
+  content: string;
+  sent_at?: Date;
+  edited_at?: Date;
 }
-export interface User {
+
+export interface MessageConfig {
+  sender: number;
+  content: string;
+  sent_at?: Date;
+  edited_at?: Date;
+}
+
+export interface UserConstructor {
   id: string | number;
   name: string;
-  identifier: boolean | Function;
+  color: string;
 }
+
