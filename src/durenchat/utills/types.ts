@@ -25,5 +25,6 @@ export interface UserConstructor {
   id: string | number;
   name: string;
   color: string;
+  photoUrl: string;
 }
 

@@ -4,15 +4,18 @@ export class User {
   id: string | number;
   name: string;
   color: string;
+  photoUrl: string;
 
   constructor({
     id,
     name,
     color,
+    photoUrl,
   }: UserConstructor) {
     this.id = id;
     this.name = name;
     this.color = color;
+    this.photoUrl = photoUrl;
   }
 
   updateUser(user: UserConstructor) {

@@ -2,11 +2,21 @@ import durenchat from './dist/durenchat/index.js';
 
 const chat = durenchat('#durenchat', {
   type: 'inbox',
-  users: [{
-    id: 2,
-    name: 'Matheus',
-    color: '#ccffee',
-  }],
+  users: [
+    {
+      id: 2,
+      name: 'Matheus',
+      color: '#ccffee',
+      photoUrl: 'https://s2-techtudo.glbimg.com/L9wb1xt7tjjL-Ocvos-Ju0tVmfc=/0x0:1200x800/984x0/smart/filters:strip_icc()/i.s3.glbimg.com/v1/AUTH_08fbf48bc0524877943fe86e43087e7a/internal_photos/bs/2023/q/l/TIdfl2SA6J16XZAy56Mw/canvaai.png',
+    },
+
+    {
+      id: 1,
+      name: 'Fernanda',
+      color: '#d1bfff',
+      photoUrl: 'https://s2-techtudo.glbimg.com/L9wb1xt7tjjL-Ocvos-Ju0tVmfc=/0x0:1200x800/984x0/smart/filters:strip_icc()/i.s3.glbimg.com/v1/AUTH_08fbf48bc0524877943fe86e43087e7a/internal_photos/bs/2023/q/l/TIdfl2SA6J16XZAy56Mw/canvaai.png',
+    }
+  ],
 
   type: 'inbox',
   self: 2,
@@ -23,10 +33,41 @@ chat.defineHeader({
 chat.defineChatcontainer('dc-messages'); // define o id do container que as mensagens vão ser inseridas
 chat.defineFooter(); // define o footer
 
-// chat.sendMessage({
-//   sender: 2,
-//   content: 'Olá',
-// });
+chat.sendMessage({
+  sender: 2,
+  content: 'Olá',
+});
+
+chat.sendMessage({
+  sender: 1,
+  content: 'Oii',
+});
+
+chat.sendMessage({
+  sender: 1,
+  content: 'Olá Olá Olá Olá Olá Olá Olá Olá Olá Olá Olá Olá Olá Olá',
+});
+
+chat.sendMessage({
+  sender: 1,
+  content: 'Bão? ',
+});
+
+chat.sendMessage({
+  sender: 2,
+  content: 'Olá',
+});
+
+chat.sendMessage({
+  sender: 2,
+  content: 'Olá ?',
+});
+
+chat.sendMessage({
+  sender: 1,
+  content: 'Bão? ',
+});
+
 
 // // Customizável
 

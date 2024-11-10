@@ -47,6 +47,27 @@ class Durenchat {
             sender: user,
         });
         this.messages.push(new_message);
+        const messageWrapper = document.createElement('div');
+        messageWrapper.classList.add('message-container');
+        messageWrapper.classList.add(new_message.sender.id === this.self?.id ? 'message-container-sender' : 'message-container-receiver');
+        const messageBaloon = document.createElement('div');
+        messageBaloon.classList.add('chat-message');
+        messageBaloon.style.backgroundColor = new_message.sender.color;
+        const messageContent = document.createElement('div');
+        messageContent.classList.add('chat-message-content');
+        messageContent.textContent = new_message.content;
+        const messageInfo = document.createElement('div');
+        messageInfo.classList.add('chat-message-date');
+        messageInfo.textContent = new_message.sent_at.toLocaleString('pt-BR');
+        messageBaloon.appendChild(messageContent);
+        messageBaloon.appendChild(messageInfo);
+        messageWrapper.appendChild(messageBaloon);
+        if (this.chat_element) {
+            this.chat_element.appendChild(messageWrapper);
+        }
+        else {
+            throw new Error('O elemento chat_wrapper não foi encontrado.');
+        }
         return new_message;
     }
     // Header
@@ -74,6 +95,7 @@ class Durenchat {
         const chatContainer = document.createElement('div');
         chatContainer.id = containerId;
         chatContainer.classList.add('chat-container');
+        this.chat_element = chatContainer;
         this.wrapper_element.appendChild(chatContainer);
     }
     defineFooter() {
@@ -82,7 +104,6 @@ class Durenchat {
         }
         const footer = document.createElement('div');
         footer.classList.add('footer-chat');
-        // Criar o ícone de emoji
         const emojiIcon = document.createElement('span');
         const emojiIconPath = new URL('../icons/emoji.svg', import.meta.url).href;
         const emojiImg = document.createElement('img');
@@ -90,7 +111,6 @@ class Durenchat {
         emojiImg.src = emojiIconPath;
         emojiImg.alt = 'Emoji';
         emojiIcon.appendChild(emojiImg);
-        // Criar o ícone de imagem
         const imageIcon = document.createElement('span');
         const imageIconPath = new URL('../icons/picture.svg', import.meta.url).href;
         const imageImg = document.createElement('img');
@@ -98,12 +118,10 @@ class Durenchat {
         imageImg.src = imageIconPath;
         imageImg.alt = 'Imagem';
         imageIcon.appendChild(imageImg);
-        // Criar o input de texto
         const inputText = document.createElement('input');
         inputText.classList.add('input-text');
         inputText.type = 'text';
         inputText.placeholder = 'Digite uma mensagem...';
-        // Criar o ícone de áudio
         const audioIcon = document.createElement('span');
         const audioIconPath = new URL('../icons/microphone.svg', import.meta.url).href;
         const audioImg = document.createElement('img');
@@ -111,12 +129,10 @@ class Durenchat {
         audioImg.src = audioIconPath;
         audioImg.alt = 'Microfone';
         audioIcon.appendChild(audioImg);
-        // Adicionar os elementos ao footer
         footer.appendChild(emojiIcon);
         footer.appendChild(imageIcon);
         footer.appendChild(inputText);
         footer.appendChild(audioIcon);
-        // Adicionar o footer ao wrapper
         this.wrapper_element.appendChild(footer);
     }
 }

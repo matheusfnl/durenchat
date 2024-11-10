@@ -1,8 +1,9 @@
 export class User {
-    constructor({ id, name, color, }) {
+    constructor({ id, name, color, photoUrl, }) {
         this.id = id;
         this.name = name;
         this.color = color;
+        this.photoUrl = photoUrl;
     }
     updateUser(user) {
         for (const field of Object.keys(user)) {
