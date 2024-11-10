@@ -9,7 +9,4 @@ export class Message {
             this.edited_at = edited_at;
         }
     }
-    updateContent(newContent) {
-        this.content = newContent;
-    }
 }

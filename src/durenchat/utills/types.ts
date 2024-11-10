@@ -4,6 +4,7 @@ export interface Chat {
   self: number;
   users: UserConstructor[];
   messages: MessageConstructor[];
+  type: string;
 }
 
 export interface MessageConstructor {

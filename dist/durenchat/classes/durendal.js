@@ -2,11 +2,13 @@ import { Message } from './message.js';
 import { User } from './user.js';
 class Durenchat {
     constructor(id, chat) {
+        this.chat_element = null;
         this.self = null;
         this.users = [];
         this.messages = [];
-        this.element = document.querySelector(`${id}`);
-        if (!this.element) {
+        this.type = chat.type;
+        this.wrapper_element = document.querySelector(`${id}`);
+        if (!this.wrapper_element) {
             throw new Error(`Element with the selector ${id} not found`);
         }
         if (chat.users && chat.users.length) {
@@ -34,17 +36,88 @@ class Durenchat {
     }
     updateUser(user) {
         const selected_user = this.getUser(user.id);
-        if (!user) {
-            throw new Error(`User not found`);
-        }
         selected_user.updateUser(user);
+        return selected_user;
     }
     // Message
     sendMessage(message) {
         const user = this.getUser(message.sender);
-        const new_message = new Message(Object.assign(Object.assign({}, message), { sender: user }));
+        const new_message = new Message({
+            ...message,
+            sender: user,
+        });
         this.messages.push(new_message);
         return new_message;
+    }
+    // Header
+    defineHeader(data) {
+        if (!this.wrapper_element) {
+            throw new Error('O elemento do wrapper não foi encontrado.');
+        }
+        const header = document.createElement('div');
+        header.classList.add('header-chat');
+        const img = document.createElement('img');
+        img.classList.add('img-header-chat');
+        img.src = data.photoUrl;
+        img.alt = `${data.name} photo`;
+        const name = document.createElement('div');
+        name.classList.add('name-header-chat');
+        name.textContent = data.name;
+        header.appendChild(img);
+        header.appendChild(name);
+        this.wrapper_element.appendChild(header);
+    }
+    defineChatcontainer(containerId) {
+        if (!this.wrapper_element) {
+            throw new Error('O elemento do wrapper não foi encontrado.');
+        }
+        const chatContainer = document.createElement('div');
+        chatContainer.id = containerId;
+        chatContainer.classList.add('chat-container');
+        this.wrapper_element.appendChild(chatContainer);
+    }
+    defineFooter() {
+        if (!this.wrapper_element) {
+            throw new Error('O elemento do wrapper não foi encontrado.');
+        }
+        const footer = document.createElement('div');
+        footer.classList.add('footer-chat');
+        // Criar o ícone de emoji
+        const emojiIcon = document.createElement('span');
+        const emojiIconPath = new URL('../icons/emoji.svg', import.meta.url).href;
+        const emojiImg = document.createElement('img');
+        emojiImg.classList.add('footer-icon');
+        emojiImg.src = emojiIconPath;
+        emojiImg.alt = 'Emoji';
+        emojiIcon.appendChild(emojiImg);
+        // Criar o ícone de imagem
+        const imageIcon = document.createElement('span');
+        const imageIconPath = new URL('../icons/picture.svg', import.meta.url).href;
+        const imageImg = document.createElement('img');
+        imageImg.classList.add('footer-icon');
+        imageImg.src = imageIconPath;
+        imageImg.alt = 'Imagem';
+        imageIcon.appendChild(imageImg);
+        // Criar o input de texto
+        const inputText = document.createElement('input');
+        inputText.classList.add('input-text');
+        inputText.type = 'text';
+        inputText.placeholder = 'Digite uma mensagem...';
+        // Criar o ícone de áudio
+        const audioIcon = document.createElement('span');
+        const audioIconPath = new URL('../icons/microphone.svg', import.meta.url).href;
+        const audioImg = document.createElement('img');
+        audioImg.classList.add('footer-icon');
+        audioImg.src = audioIconPath;
+        audioImg.alt = 'Microfone';
+        audioIcon.appendChild(audioImg);
+        // Adicionar os elementos ao footer
+        footer.appendChild(emojiIcon);
+        footer.appendChild(imageIcon);
+        footer.appendChild(inputText);
+        footer.appendChild(audioIcon);
+        // Adicionar o footer ao wrapper
+        this.wrapper_element.appendChild(footer);
     }
 }
 export default Durenchat;

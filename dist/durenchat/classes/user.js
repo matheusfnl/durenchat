@@ -5,9 +5,7 @@ export class User {
         this.color = color;
     }
     updateUser(user) {
-        console.log(user);
         for (const field of Object.keys(user)) {
-            console.log(field);
             if (field === 'id' || !(field in this))
                 continue;
             const value = user[field];
