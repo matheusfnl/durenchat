@@ -2,6 +2,8 @@
   import { Message } from './message.js';
   import { User } from './user.js';
 
+  type EventListener = (data: any) => void;
+
   class Durenchat {
     wrapper_element: HTMLElement | Element;
     chat_element: HTMLElement | Element | null = null;
@@ -9,6 +11,7 @@
     users: User[] = [];
     type: string;
     messages: Message[] = [];
+    events: { [key: string]: EventListener[] } = {};
 
     constructor(id: string | number, chat: Chat) {
       this.type = chat.type;
@@ -27,6 +30,25 @@
       if (chat.self) {
         this.self = this.getUser(chat.self);
       }
+    }
+
+    on(event: string, listener: EventListener) {
+      if (!this.events[event]) {
+        this.events[event] = [];
+      }
+      this.events[event].push(listener);
+    }
+
+    off(event: string, listener: EventListener) {
+      if (!this.events[event]) return;
+
+      this.events[event] = this.events[event].filter(e => e !== listener);
+    }
+
+    emit(event: string, data: any) {
+      if (!this.events[event]) return;
+
+      this.events[event].forEach(listener => listener(data));
     }
 
     // Users
@@ -88,6 +110,8 @@
       } else {
         throw new Error('O elemento chat_wrapper não foi encontrado.');
       }
+
+      this.emit('message-sent', new_message);
 
       return new_message;
     }

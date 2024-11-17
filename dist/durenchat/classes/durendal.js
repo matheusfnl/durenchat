@@ -6,6 +6,7 @@ class Durenchat {
         this.self = null;
         this.users = [];
         this.messages = [];
+        this.events = {};
         this.type = chat.type;
         this.wrapper_element = document.querySelector(`${id}`);
         if (!this.wrapper_element) {
@@ -20,6 +21,22 @@ class Durenchat {
         if (chat.self) {
             this.self = this.getUser(chat.self);
         }
+    }
+    on(event, listener) {
+        if (!this.events[event]) {
+            this.events[event] = [];
+        }
+        this.events[event].push(listener);
+    }
+    off(event, listener) {
+        if (!this.events[event])
+            return;
+        this.events[event] = this.events[event].filter(e => e !== listener);
+    }
+    emit(event, data) {
+        if (!this.events[event])
+            return;
+        this.events[event].forEach(listener => listener(data));
     }
     // Users
     getUser(id) {
@@ -68,6 +85,7 @@ class Durenchat {
         else {
             throw new Error('O elemento chat_wrapper não foi encontrado.');
         }
+        this.emit('message-sent', new_message);
         return new_message;
     }
     // Header

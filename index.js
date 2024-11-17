@@ -43,31 +43,6 @@ chat.sendMessage({
   content: 'Oii',
 });
 
-chat.sendMessage({
-  sender: 1,
-  content: 'Olá Olá Olá Olá Olá Olá Olá Olá Olá Olá Olá Olá Olá Olá',
-});
-
-chat.sendMessage({
-  sender: 1,
-  content: 'Bão? ',
-});
-
-chat.sendMessage({
-  sender: 2,
-  content: 'Olá',
-});
-
-chat.sendMessage({
-  sender: 2,
-  content: 'Olá ?',
-});
-
-chat.sendMessage({
-  sender: 1,
-  content: 'Bão? ',
-});
-
 
 // // Customizável
 
