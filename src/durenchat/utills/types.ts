@@ -15,7 +15,7 @@ export interface MessageConstructor {
 }
 
 export interface MessageConfig {
-  sender: number;
+  sender: number | string;
   content: string;
   sent_at?: Date;
   edited_at?: Date;

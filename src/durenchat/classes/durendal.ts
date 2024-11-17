@@ -1,205 +1,227 @@
-  import { Chat, MessageConfig, UserConstructor } from "../utills/types.js";
-  import { Message } from './message.js';
-  import { User } from './user.js';
+import { Chat, MessageConfig, UserConstructor } from "../utills/types.js";
+import { Message } from './message.js';
+import { User } from './user.js';
 
-  type EventListener = (data: any) => void;
+type EventListener = (data: any) => void;
 
-  class Durenchat {
-    wrapper_element: HTMLElement | Element;
-    chat_element: HTMLElement | Element | null = null;
-    self: User | null = null
-    users: User[] = [];
-    type: string;
-    messages: Message[] = [];
-    events: { [key: string]: EventListener[] } = {};
+class Durenchat {
+  wrapper_element: HTMLElement | Element;
+  chat_element: HTMLElement | Element | null = null;
+  self: User;
+  users: User[] = [];
+  type: string;
+  messages: Message[] = [];
+  events: { [key: string]: EventListener[] } = {};
 
-    constructor(id: string | number, chat: Chat) {
-      this.type = chat.type;
-      this.wrapper_element = document.querySelector(`${id}`) as HTMLElement | Element;
+  constructor(id: string | number, chat: Chat) {
+    this.type = chat.type;
+    this.wrapper_element = this.getElementById(id);
+    this.users = this.initializeUsers(chat.users);
+    this.self = this.getUser(chat.self);
+  }
 
-      if (!this.wrapper_element) {
-        throw new Error(`Element with the selector ${id} not found`);
-      }
-
-      if (chat.users && chat.users.length) {
-        this.users = chat.users.map(user => new User(user));
-      } else {
-        throw new Error(`An empty user array was provided`);
-      }
-
-      if (chat.self) {
-        this.self = this.getUser(chat.self);
-      }
+  // Método para obter o elemento pelo ID
+  private getElementById(id: string | number): HTMLElement | Element {
+    const element = document.querySelector(`${id}`) as HTMLElement | Element;
+    if (!element) {
+      throw new Error(`Element with the selector ${id} not found`);
     }
+    return element;
+  }
 
-    on(event: string, listener: EventListener) {
-      if (!this.events[event]) {
-        this.events[event] = [];
-      }
-      this.events[event].push(listener);
+  // Método para inicializar os usuários
+  private initializeUsers(users: UserConstructor[]): User[] {
+    if (!users || !users.length) {
+      throw new Error(`An empty user array was provided`);
     }
+    return users.map(user => new User(user));
+  }
 
-    off(event: string, listener: EventListener) {
-      if (!this.events[event]) return;
-
-      this.events[event] = this.events[event].filter(e => e !== listener);
+  // Método para adicionar ouvintes de eventos
+  on(event: string, listener: EventListener) {
+    if (!this.events[event]) {
+      this.events[event] = [];
     }
+    this.events[event].push(listener);
+  }
 
-    emit(event: string, data: any) {
-      if (!this.events[event]) return;
+  // Método para remover ouvintes de eventos
+  off(event: string, listener: EventListener) {
+    if (!this.events[event]) return;
+    this.events[event] = this.events[event].filter(e => e !== listener);
+  }
 
-      this.events[event].forEach(listener => listener(data));
+  // Método para disparar eventos
+  emit(event: string, data: any) {
+    if (!this.events[event]) return;
+    this.events[event].forEach(listener => listener(data));
+  }
+
+  // Users
+  getUser(id: string | number): User {
+    const user = this.users.find(user => user.id === id);
+    if (!user) {
+      throw new Error(`User not found`);
     }
+    return user;
+  }
 
-    // Users
-    getUser(id: string | number): User {
-      const user = this.users.find(user => user.id === id);
-      if (!user) {
-        throw new Error(`User not found`);
-      }
+  addUser(user: UserConstructor): User {
+    const new_user = new User(user);
+    this.users.push(new_user);
+    return new_user;
+  }
 
-      return user;
-    }
+  updateUser(user: UserConstructor): User {
+    const selected_user = this.getUser(user.id);
+    selected_user.updateUser(user);
+    return selected_user;
+  }
 
-    addUser(user: UserConstructor): User {
-      const new_user = new User(user);
-      this.users.push(new_user);
+  // Message
+  sendMessage(message: MessageConfig): Message {
+    const user = this.getUser(message.sender);
+    const new_message = new Message({
+      ...message,
+      sender: user,
+    });
 
-      return new_user;
-    }
+    this.messages.push(new_message);
+    this.appendMessageToChat(new_message);
+    this.emit('message-sent', new_message);
 
-    updateUser(user: UserConstructor): User {
-      const selected_user = this.getUser(user.id);
-      selected_user.updateUser(user);
+    return new_message;
+  }
 
-      return selected_user;
-    }
+  // Método para adicionar a mensagem ao chat
+  private appendMessageToChat(message: Message) {
+    const messageWrapper = this.createMessageWrapper(message);
+    const messageBaloon = this.createMessageBaloon(message);
 
-    // Message
-    sendMessage(message: MessageConfig): Message {
-      const user = this.getUser(message.sender);
-      const new_message = new Message({
-        ...message,
-        sender: user,
-      });
+    messageWrapper.appendChild(messageBaloon);
 
-      this.messages.push(new_message);
-
-      const messageWrapper = document.createElement('div');
-      messageWrapper.classList.add('message-container');
-      messageWrapper.classList.add(new_message.sender.id === this.self?.id ? 'message-container-sender' : 'message-container-receiver');
-
-      const messageBaloon = document.createElement('div');
-      messageBaloon.classList.add('chat-message');
-      messageBaloon.style.backgroundColor = new_message.sender.color;
-
-      const messageContent = document.createElement('div');
-      messageContent.classList.add('chat-message-content');
-      messageContent.textContent = new_message.content;
-
-      const messageInfo = document.createElement('div');
-      messageInfo.classList.add('chat-message-date');
-      messageInfo.textContent = new_message.sent_at.toLocaleString('pt-BR');
-
-      messageBaloon.appendChild(messageContent);
-      messageBaloon.appendChild(messageInfo);
-      messageWrapper.appendChild(messageBaloon);
-
-      if (this.chat_element) {
-        this.chat_element.appendChild(messageWrapper);
-      } else {
-        throw new Error('O elemento chat_wrapper não foi encontrado.');
-      }
-
-      this.emit('message-sent', new_message);
-
-      return new_message;
-    }
-
-    // Header
-    defineHeader(data: any) {
-      if (!this.wrapper_element) {
-        throw new Error('O elemento do wrapper não foi encontrado.');
-      }
-
-      const header = document.createElement('div');
-      header.classList.add('header-chat');
-
-      const img = document.createElement('img');
-      img.classList.add('img-header-chat');
-      img.src = data.photoUrl;
-      img.alt = `${data.name} photo`;
-
-      const name = document.createElement('div');
-      name.classList.add('name-header-chat');
-      name.textContent = data.name;
-
-      header.appendChild(img);
-      header.appendChild(name);
-
-      this.wrapper_element.appendChild(header);
-    }
-
-    defineChatcontainer(containerId: string) {
-      if (!this.wrapper_element) {
-        throw new Error('O elemento do wrapper não foi encontrado.');
-      }
-
-      const chatContainer = document.createElement('div');
-      chatContainer.id = containerId;
-      chatContainer.classList.add('chat-container');
-
-      this.chat_element = chatContainer;
-      this.wrapper_element.appendChild(chatContainer);
-    }
-
-    defineFooter() {
-      if (!this.wrapper_element) {
-        throw new Error('O elemento do wrapper não foi encontrado.');
-      }
-
-      const footer = document.createElement('div');
-      footer.classList.add('footer-chat');
-
-      const emojiIcon = document.createElement('span');
-      const emojiIconPath = new URL('../icons/emoji.svg', import.meta.url).href;
-      const emojiImg = document.createElement('img');
-      emojiImg.classList.add('footer-icon');
-      emojiImg.src = emojiIconPath;
-      emojiImg.alt = 'Emoji';
-
-      emojiIcon.appendChild(emojiImg);
-
-      const imageIcon = document.createElement('span');
-      const imageIconPath = new URL('../icons/picture.svg', import.meta.url).href;
-      const imageImg = document.createElement('img');
-      imageImg.classList.add('footer-icon');
-      imageImg.src = imageIconPath;
-      imageImg.alt = 'Imagem';
-
-      imageIcon.appendChild(imageImg);
-
-      const inputText = document.createElement('input');
-      inputText.classList.add('input-text');
-      inputText.type = 'text';
-      inputText.placeholder = 'Digite uma mensagem...';
-
-      const audioIcon = document.createElement('span');
-      const audioIconPath = new URL('../icons/microphone.svg', import.meta.url).href;
-      const audioImg = document.createElement('img');
-      audioImg.classList.add('footer-icon');
-      audioImg.src = audioIconPath;
-      audioImg.alt = 'Microfone';
-
-      audioIcon.appendChild(audioImg);
-
-      footer.appendChild(emojiIcon);
-      footer.appendChild(imageIcon);
-      footer.appendChild(inputText);
-      footer.appendChild(audioIcon);
-
-      this.wrapper_element.appendChild(footer);
+    if (this.chat_element) {
+      this.chat_element.appendChild(messageWrapper);
+    } else {
+      throw new Error('O elemento chat_wrapper não foi encontrado.');
     }
   }
 
-  export default Durenchat;
+  // Método para criar o contêiner da mensagem
+  private createMessageWrapper(message: Message): HTMLElement {
+    const messageWrapper = document.createElement('div');
+    messageWrapper.classList.add('message-container');
+    messageWrapper.classList.add(message.sender.id === this.self?.id ? 'message-container-sender' : 'message-container-receiver');
+    return messageWrapper;
+  }
+
+  // Método para criar o balão da mensagem
+  private createMessageBaloon(message: Message): HTMLElement {
+    const messageBaloon = document.createElement('div');
+    messageBaloon.classList.add('chat-message');
+    messageBaloon.style.backgroundColor = message.sender.color;
+
+    const messageContent = document.createElement('div');
+    messageContent.classList.add('chat-message-content');
+    messageContent.textContent = message.content;
+
+    const messageInfo = document.createElement('div');
+    messageInfo.classList.add('chat-message-date');
+    messageInfo.textContent = message.sent_at.toLocaleString('pt-BR');
+
+    messageBaloon.appendChild(messageContent);
+    messageBaloon.appendChild(messageInfo);
+
+    return messageBaloon;
+  }
+
+  // Header
+  defineHeader(data: any) {
+    if (!this.wrapper_element) {
+      throw new Error('O elemento do wrapper não foi encontrado.');
+    }
+
+    const header = document.createElement('div');
+    header.classList.add('header-chat');
+
+    const img = document.createElement('img');
+    img.classList.add('img-header-chat');
+    img.src = data.photoUrl;
+    img.alt = `${data.name} photo`;
+
+    const name = document.createElement('div');
+    name.classList.add('name-header-chat');
+    name.textContent = data.name;
+
+    header.appendChild(img);
+    header.appendChild(name);
+
+    this.wrapper_element.appendChild(header);
+  }
+
+  // Chat container
+  defineChatcontainer(containerId: string) {
+    if (!this.wrapper_element) {
+      throw new Error('O elemento do wrapper não foi encontrado.');
+    }
+
+    const chatContainer = document.createElement('div');
+    chatContainer.id = containerId;
+    chatContainer.classList.add('chat-container');
+
+    this.chat_element = chatContainer;
+    this.wrapper_element.appendChild(chatContainer);
+  }
+
+  // Footer
+  defineFooter() {
+    if (!this.wrapper_element) {
+      throw new Error('O elemento do wrapper não foi encontrado.');
+    }
+
+    const footer = document.createElement('div');
+    footer.classList.add('footer-chat');
+
+    const emojiIcon = this.createFooterIcon('../icons/emoji.svg', 'Emoji');
+    const imageIcon = this.createFooterIcon('../icons/picture.svg', 'Imagem');
+    const audioIcon = this.createFooterIcon('../icons/microphone.svg', 'Microfone');
+
+    const inputText = document.createElement('input');
+    inputText.classList.add('input-text');
+    inputText.type = 'text';
+    inputText.placeholder = 'Digite uma mensagem...';
+    inputText.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        const messageContent = inputText.value.trim();
+        if (messageContent) {
+          this.sendMessage({
+            sender: this.self.id,
+            content: messageContent,
+            sent_at: new Date(),
+          });
+          inputText.value = '';
+        }
+      }
+    });
+
+    footer.appendChild(emojiIcon);
+    footer.appendChild(imageIcon);
+    footer.appendChild(inputText);
+    footer.appendChild(audioIcon);
+
+    this.wrapper_element.appendChild(footer);
+  }
+
+  // Método para criar ícones do rodapé
+  private createFooterIcon(iconPath: string, altText: string): HTMLElement {
+    const iconSpan = document.createElement('span');
+    const iconImg = document.createElement('img');
+    iconImg.classList.add('footer-icon');
+    iconImg.src = new URL(iconPath, import.meta.url).href;
+    iconImg.alt = altText;
+    iconSpan.appendChild(iconImg);
+    return iconSpan;
+  }
+}
+
+export default Durenchat;

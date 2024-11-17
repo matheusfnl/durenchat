@@ -3,36 +3,43 @@ import { User } from './user.js';
 class Durenchat {
     constructor(id, chat) {
         this.chat_element = null;
-        this.self = null;
         this.users = [];
         this.messages = [];
         this.events = {};
         this.type = chat.type;
-        this.wrapper_element = document.querySelector(`${id}`);
-        if (!this.wrapper_element) {
+        this.wrapper_element = this.getElementById(id);
+        this.users = this.initializeUsers(chat.users);
+        this.self = this.getUser(chat.self);
+    }
+    // Método para obter o elemento pelo ID
+    getElementById(id) {
+        const element = document.querySelector(`${id}`);
+        if (!element) {
             throw new Error(`Element with the selector ${id} not found`);
         }
-        if (chat.users && chat.users.length) {
-            this.users = chat.users.map(user => new User(user));
-        }
-        else {
+        return element;
+    }
+    // Método para inicializar os usuários
+    initializeUsers(users) {
+        if (!users || !users.length) {
             throw new Error(`An empty user array was provided`);
         }
-        if (chat.self) {
-            this.self = this.getUser(chat.self);
-        }
+        return users.map(user => new User(user));
     }
+    // Método para adicionar ouvintes de eventos
     on(event, listener) {
         if (!this.events[event]) {
             this.events[event] = [];
         }
         this.events[event].push(listener);
     }
+    // Método para remover ouvintes de eventos
     off(event, listener) {
         if (!this.events[event])
             return;
         this.events[event] = this.events[event].filter(e => e !== listener);
     }
+    // Método para disparar eventos
     emit(event, data) {
         if (!this.events[event])
             return;
@@ -64,20 +71,14 @@ class Durenchat {
             sender: user,
         });
         this.messages.push(new_message);
-        const messageWrapper = document.createElement('div');
-        messageWrapper.classList.add('message-container');
-        messageWrapper.classList.add(new_message.sender.id === this.self?.id ? 'message-container-sender' : 'message-container-receiver');
-        const messageBaloon = document.createElement('div');
-        messageBaloon.classList.add('chat-message');
-        messageBaloon.style.backgroundColor = new_message.sender.color;
-        const messageContent = document.createElement('div');
-        messageContent.classList.add('chat-message-content');
-        messageContent.textContent = new_message.content;
-        const messageInfo = document.createElement('div');
-        messageInfo.classList.add('chat-message-date');
-        messageInfo.textContent = new_message.sent_at.toLocaleString('pt-BR');
-        messageBaloon.appendChild(messageContent);
-        messageBaloon.appendChild(messageInfo);
+        this.appendMessageToChat(new_message);
+        this.emit('message-sent', new_message);
+        return new_message;
+    }
+    // Método para adicionar a mensagem ao chat
+    appendMessageToChat(message) {
+        const messageWrapper = this.createMessageWrapper(message);
+        const messageBaloon = this.createMessageBaloon(message);
         messageWrapper.appendChild(messageBaloon);
         if (this.chat_element) {
             this.chat_element.appendChild(messageWrapper);
@@ -85,8 +86,28 @@ class Durenchat {
         else {
             throw new Error('O elemento chat_wrapper não foi encontrado.');
         }
-        this.emit('message-sent', new_message);
-        return new_message;
+    }
+    // Método para criar o contêiner da mensagem
+    createMessageWrapper(message) {
+        const messageWrapper = document.createElement('div');
+        messageWrapper.classList.add('message-container');
+        messageWrapper.classList.add(message.sender.id === this.self?.id ? 'message-container-sender' : 'message-container-receiver');
+        return messageWrapper;
+    }
+    // Método para criar o balão da mensagem
+    createMessageBaloon(message) {
+        const messageBaloon = document.createElement('div');
+        messageBaloon.classList.add('chat-message');
+        messageBaloon.style.backgroundColor = message.sender.color;
+        const messageContent = document.createElement('div');
+        messageContent.classList.add('chat-message-content');
+        messageContent.textContent = message.content;
+        const messageInfo = document.createElement('div');
+        messageInfo.classList.add('chat-message-date');
+        messageInfo.textContent = message.sent_at.toLocaleString('pt-BR');
+        messageBaloon.appendChild(messageContent);
+        messageBaloon.appendChild(messageInfo);
+        return messageBaloon;
     }
     // Header
     defineHeader(data) {
@@ -122,36 +143,41 @@ class Durenchat {
         }
         const footer = document.createElement('div');
         footer.classList.add('footer-chat');
-        const emojiIcon = document.createElement('span');
-        const emojiIconPath = new URL('../icons/emoji.svg', import.meta.url).href;
-        const emojiImg = document.createElement('img');
-        emojiImg.classList.add('footer-icon');
-        emojiImg.src = emojiIconPath;
-        emojiImg.alt = 'Emoji';
-        emojiIcon.appendChild(emojiImg);
-        const imageIcon = document.createElement('span');
-        const imageIconPath = new URL('../icons/picture.svg', import.meta.url).href;
-        const imageImg = document.createElement('img');
-        imageImg.classList.add('footer-icon');
-        imageImg.src = imageIconPath;
-        imageImg.alt = 'Imagem';
-        imageIcon.appendChild(imageImg);
+        const emojiIcon = this.createFooterIcon('../icons/emoji.svg', 'Emoji');
+        const imageIcon = this.createFooterIcon('../icons/picture.svg', 'Imagem');
+        const audioIcon = this.createFooterIcon('../icons/microphone.svg', 'Microfone');
         const inputText = document.createElement('input');
         inputText.classList.add('input-text');
         inputText.type = 'text';
         inputText.placeholder = 'Digite uma mensagem...';
-        const audioIcon = document.createElement('span');
-        const audioIconPath = new URL('../icons/microphone.svg', import.meta.url).href;
-        const audioImg = document.createElement('img');
-        audioImg.classList.add('footer-icon');
-        audioImg.src = audioIconPath;
-        audioImg.alt = 'Microfone';
-        audioIcon.appendChild(audioImg);
+        inputText.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                const messageContent = inputText.value.trim();
+                if (messageContent) {
+                    this.sendMessage({
+                        sender: this.self.id,
+                        content: messageContent,
+                        sent_at: new Date(),
+                    });
+                    inputText.value = '';
+                }
+            }
+        });
         footer.appendChild(emojiIcon);
         footer.appendChild(imageIcon);
         footer.appendChild(inputText);
         footer.appendChild(audioIcon);
         this.wrapper_element.appendChild(footer);
+    }
+    // Método para criar ícones do rodapé
+    createFooterIcon(iconPath, altText) {
+        const iconSpan = document.createElement('span');
+        const iconImg = document.createElement('img');
+        iconImg.classList.add('footer-icon');
+        iconImg.src = new URL(iconPath, import.meta.url).href;
+        iconImg.alt = altText;
+        iconSpan.appendChild(iconImg);
+        return iconSpan;
     }
 }
 export default Durenchat;
