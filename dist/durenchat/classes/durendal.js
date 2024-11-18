@@ -94,6 +94,7 @@ class Durenchat {
         messageWrapper.classList.add(message.sender.id === this.self?.id ? 'message-container-sender' : 'message-container-receiver');
         return messageWrapper;
     }
+    // Método para criar o balão da mensagem
     createMessageBaloon(message) {
         const messageBaloon = document.createElement('div');
         messageBaloon.classList.add('chat-message');
@@ -105,61 +106,7 @@ class Durenchat {
             messageContent.textContent = message.content;
         }
         else {
-            switch (message.content.type) {
-                case 'image':
-                    const img = document.createElement('img');
-                    img.classList.add('max-message-content');
-                    img.src = message.content.url;
-                    img.alt = 'Imagem';
-                    messageContent.appendChild(img);
-                    if (message.content.caption) {
-                        const caption = document.createElement('div');
-                        caption.classList.add('message-caption');
-                        caption.textContent = message.content.caption;
-                        messageContent.appendChild(caption);
-                    }
-                    break;
-                case 'document':
-                    const docLink = document.createElement('a');
-                    docLink.classList.add('max-message-content');
-                    docLink.href = message.content.url;
-                    docLink.textContent = message.content.name;
-                    docLink.target = '_blank';
-                    messageContent.appendChild(docLink);
-                    if (message.content.caption) {
-                        const caption = document.createElement('div');
-                        caption.classList.add('message-caption');
-                        caption.textContent = message.content.caption;
-                        messageContent.appendChild(caption);
-                    }
-                    break;
-                case 'audio':
-                    const audio = document.createElement('audio');
-                    audio.classList.add('max-message-content');
-                    audio.controls = true;
-                    const audioSource = document.createElement('source');
-                    audioSource.src = message.content.url;
-                    audioSource.type = 'audio/mpeg';
-                    audio.appendChild(audioSource);
-                    messageContent.appendChild(audio);
-                    break;
-                case 'video':
-                    const video = document.createElement('video');
-                    video.classList.add('max-message-content');
-                    video.controls = true;
-                    const videoSource = document.createElement('source');
-                    videoSource.src = message.content.url;
-                    videoSource.type = 'video/mp4';
-                    video.appendChild(videoSource);
-                    messageContent.appendChild(video);
-                    if (message.content.caption) {
-                        const caption = document.createElement('div');
-                        caption.classList.add('message-caption');
-                        caption.textContent = message.content.caption;
-                        messageContent.appendChild(caption);
-                    }
-                    break;
-            }
+            this.appendContentToMessage(messageContent, message.content);
         }
         const messageInfo = document.createElement('div');
         messageInfo.classList.add('chat-message-date');
@@ -168,6 +115,76 @@ class Durenchat {
         messageBaloon.appendChild(messageContent);
         messageBaloon.appendChild(messageInfo);
         return messageBaloon;
+    }
+    // Método para adicionar conteúdo ao balão da mensagem
+    appendContentToMessage(messageContent, content) {
+        const contentHandlers = {
+            'image': this.appendImageContent.bind(this, messageContent),
+            'document': this.appendDocumentContent.bind(this, messageContent),
+            'audio': this.appendAudioContent.bind(this, messageContent),
+            'video': this.appendVideoContent.bind(this, messageContent),
+        };
+        const handler = contentHandlers[content.type];
+        if (handler) {
+            handler(content);
+        }
+    }
+    // Método para adicionar conteúdo de imagem
+    appendImageContent(messageContent, content) {
+        const img = document.createElement('img');
+        img.classList.add('max-message-content');
+        img.src = content.url;
+        img.alt = 'Imagem';
+        messageContent.appendChild(img);
+        if (content.caption) {
+            const caption = document.createElement('div');
+            caption.classList.add('message-caption');
+            caption.textContent = content.caption;
+            messageContent.appendChild(caption);
+        }
+    }
+    // Método para adicionar conteúdo de documento
+    appendDocumentContent(messageContent, content) {
+        const docLink = document.createElement('a');
+        docLink.classList.add('max-message-content');
+        docLink.href = content.url;
+        docLink.textContent = content.name;
+        docLink.target = '_blank';
+        messageContent.appendChild(docLink);
+        if (content.caption) {
+            const caption = document.createElement('div');
+            caption.classList.add('message-caption');
+            caption.textContent = content.caption;
+            messageContent.appendChild(caption);
+        }
+    }
+    // Método para adicionar conteúdo de áudio
+    appendAudioContent(messageContent, content) {
+        const audio = document.createElement('audio');
+        audio.classList.add('max-message-content');
+        audio.controls = true;
+        const audioSource = document.createElement('source');
+        audioSource.src = content.url;
+        audioSource.type = 'audio/mpeg';
+        audio.appendChild(audioSource);
+        messageContent.appendChild(audio);
+    }
+    // Método para adicionar conteúdo de vídeo
+    appendVideoContent(messageContent, content) {
+        const video = document.createElement('video');
+        video.classList.add('max-message-content');
+        video.controls = true;
+        const videoSource = document.createElement('source');
+        videoSource.src = content.url;
+        videoSource.type = 'video/mp4';
+        video.appendChild(videoSource);
+        messageContent.appendChild(video);
+        if (content.caption) {
+            const caption = document.createElement('div');
+            caption.classList.add('message-caption');
+            caption.textContent = content.caption;
+            messageContent.appendChild(caption);
+        }
     }
     // Header
     defineHeader(data) {
@@ -194,8 +211,63 @@ class Durenchat {
         const chatContainer = document.createElement('div');
         chatContainer.id = containerId;
         chatContainer.classList.add('chat-container');
+        console.log(chatContainer);
         this.chat_element = chatContainer;
         this.wrapper_element.appendChild(chatContainer);
+        this.initializeDragAndDrop();
+    }
+    // Método para inicializar arrastar e soltar
+    initializeDragAndDrop() {
+        if (!this.chat_element) {
+            throw new Error('O elemento chat_element não foi encontrado.');
+        }
+        this.chat_element.addEventListener('dragover', (event) => {
+            event.preventDefault();
+            this.chat_element?.classList.add('dragover');
+        });
+        this.chat_element.addEventListener('dragleave', () => {
+            this.chat_element?.classList.remove('dragover');
+        });
+        this.chat_element.addEventListener('drop', (event) => {
+            event.preventDefault();
+            this.chat_element?.classList.remove('dragover');
+            const dragEvent = event;
+            const files = dragEvent.dataTransfer?.files;
+            if (files && files.length > 0) {
+                const file = files[0];
+                this.handleFileDrop(file);
+            }
+        });
+    }
+    // Método para lidar com o drop de arquivos
+    handleFileDrop(file) {
+        const reader = new FileReader();
+        reader.onload = () => {
+            const content = this.createMessageContent(file, reader.result);
+            if (content) {
+                this.sendMessage({
+                    sender: this.self.id,
+                    content: content,
+                    sent_at: new Date(),
+                });
+            }
+        };
+        reader.readAsDataURL(file);
+    }
+    // Método para criar o conteúdo da mensagem com base no tipo de arquivo
+    createMessageContent(file, result) {
+        const contentHandlers = {
+            'image/': (file, result) => ({ type: 'image', url: result }),
+            'video/': (file, result) => ({ type: 'video', url: result }),
+            'application/pdf': (file, result) => ({ type: 'document', url: result, name: file.name }),
+            'audio/mpeg': (file, result) => ({ type: 'audio', url: result }),
+        };
+        for (const [key, handler] of Object.entries(contentHandlers)) {
+            if (file.type.startsWith(key)) {
+                return handler(file, result);
+            }
+        }
+        return null;
     }
     defineFooter() {
         if (!this.wrapper_element) {
@@ -226,38 +298,14 @@ class Durenchat {
         const fileInput = document.createElement('input');
         fileInput.type = 'file';
         fileInput.style.display = 'none';
-        fileInput.accept = 'image/*,video/*,application/pdf,audio/mpeg'; // Aceitar imagens, vídeos, documentos PDF e áudio MP3
+        fileInput.accept = 'image/*,video/*,application/pdf,audio/mpeg';
         documentIcon.addEventListener('click', () => {
             fileInput.click();
         });
         fileInput.addEventListener('change', (event) => {
             const file = event.target.files?.[0];
             if (file) {
-                const reader = new FileReader();
-                reader.onload = () => {
-                    let content;
-                    if (file.type.startsWith('image/')) {
-                        content = { type: 'image', url: reader.result };
-                    }
-                    else if (file.type.startsWith('video/')) {
-                        content = { type: 'video', url: reader.result };
-                    }
-                    else if (file.type === 'application/pdf') {
-                        content = { type: 'document', url: reader.result, name: file.name };
-                    }
-                    else if (file.type === 'audio/mpeg') {
-                        content = { type: 'audio', url: reader.result };
-                    }
-                    else {
-                        return;
-                    }
-                    this.sendMessage({
-                        sender: this.self.id,
-                        content: content,
-                        sent_at: new Date(),
-                    });
-                };
-                reader.readAsDataURL(file);
+                this.handleFileDrop(file);
             }
         });
         footer.appendChild(emojiIcon);

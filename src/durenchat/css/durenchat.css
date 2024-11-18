@@ -29,6 +29,8 @@
   padding: 10px;
 }
 
+.chat-container.dragover { outline: 2px dashed #a8b1ff; }
+
 .footer-chat {
   display: flex;
   align-items: center;;
