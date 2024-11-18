@@ -1,4 +1,4 @@
-import { Chat, MessageConfig, UserConstructor } from "../utills/types.js";
+import { Chat, MessageConfig, UserConstructor, MessageContent } from "../utills/types.js";
 import { Message } from './message.js';
 import { User } from './user.js';
 
@@ -115,12 +115,11 @@ class Durenchat {
     return messageWrapper;
   }
 
-  // Método para criar o balão da mensagem
   private createMessageBaloon(message: Message): HTMLElement {
     const messageBaloon = document.createElement('div');
     messageBaloon.classList.add('chat-message');
     messageBaloon.style.backgroundColor = message.sender.color;
-    messageBaloon.style.color = message.sender.text_color; // Aplicar o estilo text_color ao balão
+    messageBaloon.style.color = message.sender.text_color;
 
     const messageContent = document.createElement('div');
     messageContent.classList.add('chat-message-content');
@@ -242,7 +241,7 @@ class Durenchat {
     footer.classList.add('footer-chat');
 
     const emojiIcon = this.createFooterIcon('../icons/emoji.svg', 'Emoji');
-    const imageIcon = this.createFooterIcon('../icons/picture.svg', 'Imagem');
+    const documentIcon = this.createFooterIcon('../icons/picture.svg', 'Imagem');
     const audioIcon = this.createFooterIcon('../icons/microphone.svg', 'Microfone');
 
     const inputText = document.createElement('input');
@@ -263,10 +262,48 @@ class Durenchat {
       }
     });
 
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.style.display = 'none';
+    fileInput.accept = 'image/*,video/*,application/pdf,audio/mpeg'; // Aceitar imagens, vídeos, documentos PDF e áudio MP3
+
+    documentIcon.addEventListener('click', () => {
+      fileInput.click();
+    });
+
+    fileInput.addEventListener('change', (event) => {
+      const file = (event.target as HTMLInputElement).files?.[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          let content: MessageContent;
+          if (file.type.startsWith('image/')) {
+            content = { type: 'image', url: reader.result as string };
+          } else if (file.type.startsWith('video/')) {
+            content = { type: 'video', url: reader.result as string };
+          } else if (file.type === 'application/pdf') {
+            content = { type: 'document', url: reader.result as string, name: file.name };
+          } else if (file.type === 'audio/mpeg') {
+            content = { type: 'audio', url: reader.result as string };
+          } else {
+            return;
+          }
+
+          this.sendMessage({
+            sender: this.self.id,
+            content: content,
+            sent_at: new Date(),
+          });
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
     footer.appendChild(emojiIcon);
-    footer.appendChild(imageIcon);
+    footer.appendChild(documentIcon);
     footer.appendChild(inputText);
     footer.appendChild(audioIcon);
+    footer.appendChild(fileInput);
 
     this.wrapper_element.appendChild(footer);
   }

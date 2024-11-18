@@ -94,12 +94,11 @@ class Durenchat {
         messageWrapper.classList.add(message.sender.id === this.self?.id ? 'message-container-sender' : 'message-container-receiver');
         return messageWrapper;
     }
-    // Método para criar o balão da mensagem
     createMessageBaloon(message) {
         const messageBaloon = document.createElement('div');
         messageBaloon.classList.add('chat-message');
         messageBaloon.style.backgroundColor = message.sender.color;
-        messageBaloon.style.color = message.sender.text_color; // Aplicar o estilo text_color ao balão
+        messageBaloon.style.color = message.sender.text_color;
         const messageContent = document.createElement('div');
         messageContent.classList.add('chat-message-content');
         if (typeof message.content === 'string') {
@@ -205,7 +204,7 @@ class Durenchat {
         const footer = document.createElement('div');
         footer.classList.add('footer-chat');
         const emojiIcon = this.createFooterIcon('../icons/emoji.svg', 'Emoji');
-        const imageIcon = this.createFooterIcon('../icons/picture.svg', 'Imagem');
+        const documentIcon = this.createFooterIcon('../icons/picture.svg', 'Imagem');
         const audioIcon = this.createFooterIcon('../icons/microphone.svg', 'Microfone');
         const inputText = document.createElement('input');
         inputText.classList.add('input-text');
@@ -224,10 +223,48 @@ class Durenchat {
                 }
             }
         });
+        const fileInput = document.createElement('input');
+        fileInput.type = 'file';
+        fileInput.style.display = 'none';
+        fileInput.accept = 'image/*,video/*,application/pdf,audio/mpeg'; // Aceitar imagens, vídeos, documentos PDF e áudio MP3
+        documentIcon.addEventListener('click', () => {
+            fileInput.click();
+        });
+        fileInput.addEventListener('change', (event) => {
+            const file = event.target.files?.[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = () => {
+                    let content;
+                    if (file.type.startsWith('image/')) {
+                        content = { type: 'image', url: reader.result };
+                    }
+                    else if (file.type.startsWith('video/')) {
+                        content = { type: 'video', url: reader.result };
+                    }
+                    else if (file.type === 'application/pdf') {
+                        content = { type: 'document', url: reader.result, name: file.name };
+                    }
+                    else if (file.type === 'audio/mpeg') {
+                        content = { type: 'audio', url: reader.result };
+                    }
+                    else {
+                        return;
+                    }
+                    this.sendMessage({
+                        sender: this.self.id,
+                        content: content,
+                        sent_at: new Date(),
+                    });
+                };
+                reader.readAsDataURL(file);
+            }
+        });
         footer.appendChild(emojiIcon);
-        footer.appendChild(imageIcon);
+        footer.appendChild(documentIcon);
         footer.appendChild(inputText);
         footer.appendChild(audioIcon);
+        footer.appendChild(fileInput);
         this.wrapper_element.appendChild(footer);
     }
     // Método para criar ícones do rodapé
