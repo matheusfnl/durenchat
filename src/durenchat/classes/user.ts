@@ -5,17 +5,23 @@ export class User {
   name: string;
   color: string;
   photoUrl: string;
+  text_color: string = '#000000';
 
   constructor({
     id,
     name,
     color,
+    text_color,
     photoUrl,
   }: UserConstructor) {
     this.id = id;
     this.name = name;
     this.color = color;
     this.photoUrl = photoUrl;
+
+    if (text_color) {
+      this.text_color = text_color;
+    }
   }
 
   updateUser(user: UserConstructor) {

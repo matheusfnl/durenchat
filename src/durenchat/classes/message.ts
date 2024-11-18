@@ -1,9 +1,9 @@
-import { MessageConstructor } from '../utills/types.js'
+import { MessageConstructor, MessageContent } from '../utills/types.js'
 import { User } from './user.js';
 
 export class Message {
   sender: User;
-  content: string;
+  content: MessageContent;
   sent_at: Date = new Date();
   edited_at?: Date | null = null;
 

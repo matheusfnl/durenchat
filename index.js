@@ -6,14 +6,15 @@ const chat = durenchat('#durenchat', {
     {
       id: 2,
       name: 'Matheus',
-      color: '#ccffee',
+      color: '#5cc1ff',
+      text_color: '#fff',
       photoUrl: 'https://s2-techtudo.glbimg.com/L9wb1xt7tjjL-Ocvos-Ju0tVmfc=/0x0:1200x800/984x0/smart/filters:strip_icc()/i.s3.glbimg.com/v1/AUTH_08fbf48bc0524877943fe86e43087e7a/internal_photos/bs/2023/q/l/TIdfl2SA6J16XZAy56Mw/canvaai.png',
     },
 
     {
       id: 1,
       name: 'Fernanda',
-      color: '#d1bfff',
+      color: '#ebe6e6',
       photoUrl: 'https://s2-techtudo.glbimg.com/L9wb1xt7tjjL-Ocvos-Ju0tVmfc=/0x0:1200x800/984x0/smart/filters:strip_icc()/i.s3.glbimg.com/v1/AUTH_08fbf48bc0524877943fe86e43087e7a/internal_photos/bs/2023/q/l/TIdfl2SA6J16XZAy56Mw/canvaai.png',
     }
   ],
@@ -39,10 +40,49 @@ chat.sendMessage({
 });
 
 chat.sendMessage({
-  sender: 1,
-  content: 'Oii',
+  sender: 2,
+  content: { type: 'image', url: 'https://letsenhance.io/static/73136da51c245e80edc6ccfe44888a99/1015f/MainBefore.jpg', caption: 'Isso é o caption' },
 });
 
+chat.sendMessage({
+  sender: 2,
+  content: { type: 'document', url: 'https://example.com/document.pdf', name: 'Documento', caption: 'Isso é o caption' },
+});
+
+chat.sendMessage({
+  sender: 2,
+  content: { type: 'audio', url: 'https://example.com/audio.mp3' },
+});
+
+chat.sendMessage({
+  sender: 2,
+  content: { type: 'video', url: 'https://example.com/video.mp4', caption: 'Isso é o caption' },
+});
+
+chat.sendMessage({
+  sender: 1,
+  content: 'Texto simples',
+});
+
+chat.sendMessage({
+  sender: 1,
+  content: { type: 'image', url: 'https://letsenhance.io/static/73136da51c245e80edc6ccfe44888a99/1015f/MainBefore.jpg', caption: 'Isso é o caption' },
+});
+
+chat.sendMessage({
+  sender: 1,
+  content: { type: 'document', url: 'https://example.com/document.pdf', name: 'Documento', caption: 'Isso é o caption' },
+});
+
+chat.sendMessage({
+  sender: 1,
+  content: { type: 'audio', url: 'https://example.com/audio.mp3' },
+});
+
+chat.sendMessage({
+  sender: 1,
+  content: { type: 'video', url: 'https://example.com/video.mp4', caption: 'Isso é o caption' },
+});
 
 // // Customizável
 

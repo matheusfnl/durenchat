@@ -1,9 +1,13 @@
 export class User {
-    constructor({ id, name, color, photoUrl, }) {
+    constructor({ id, name, color, text_color, photoUrl, }) {
+        this.text_color = '#000000';
         this.id = id;
         this.name = name;
         this.color = color;
         this.photoUrl = photoUrl;
+        if (text_color) {
+            this.text_color = text_color;
+        }
     }
     updateUser(user) {
         for (const field of Object.keys(user)) {

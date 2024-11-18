@@ -120,14 +120,75 @@ class Durenchat {
     const messageBaloon = document.createElement('div');
     messageBaloon.classList.add('chat-message');
     messageBaloon.style.backgroundColor = message.sender.color;
+    messageBaloon.style.color = message.sender.text_color; // Aplicar o estilo text_color ao balão
 
     const messageContent = document.createElement('div');
     messageContent.classList.add('chat-message-content');
-    messageContent.textContent = message.content;
+
+    if (typeof message.content === 'string') {
+      messageContent.textContent = message.content;
+    } else {
+      switch (message.content.type) {
+        case 'image':
+          const img = document.createElement('img');
+          img.classList.add('max-message-content');
+          img.src = message.content.url;
+          img.alt = 'Imagem';
+          messageContent.appendChild(img);
+          if (message.content.caption) {
+            const caption = document.createElement('div');
+            caption.classList.add('message-caption');
+            caption.textContent = message.content.caption;
+            messageContent.appendChild(caption);
+          }
+          break;
+        case 'document':
+          const docLink = document.createElement('a');
+          docLink.classList.add('max-message-content');
+          docLink.href = message.content.url;
+          docLink.textContent = message.content.name;
+          docLink.target = '_blank';
+          messageContent.appendChild(docLink);
+          if (message.content.caption) {
+            const caption = document.createElement('div');
+            caption.classList.add('message-caption');
+            caption.textContent = message.content.caption;
+            messageContent.appendChild(caption);
+          }
+          break;
+        case 'audio':
+          const audio = document.createElement('audio');
+          audio.classList.add('max-message-content');
+          audio.controls = true;
+          const audioSource = document.createElement('source');
+          audioSource.src = message.content.url;
+          audioSource.type = 'audio/mpeg';
+          audio.appendChild(audioSource);
+          messageContent.appendChild(audio);
+          break;
+        case 'video':
+          const video = document.createElement('video');
+          video.classList.add('max-message-content');
+          video.controls = true;
+          const videoSource = document.createElement('source');
+          videoSource.src = message.content.url;
+          videoSource.type = 'video/mp4';
+          video.appendChild(videoSource);
+          messageContent.appendChild(video);
+          if (message.content.caption) {
+            const caption = document.createElement('div');
+            caption.classList.add('message-caption');
+            caption.textContent = message.content.caption;
+            messageContent.appendChild(caption);
+          }
+          break;
+      }
+    }
 
     const messageInfo = document.createElement('div');
     messageInfo.classList.add('chat-message-date');
     messageInfo.textContent = message.sent_at.toLocaleString('pt-BR');
+    messageInfo.style.opacity = '0.7';
 
     messageBaloon.appendChild(messageContent);
     messageBaloon.appendChild(messageInfo);
@@ -149,7 +210,7 @@ class Durenchat {
     img.src = data.photoUrl;
     img.alt = `${data.name} photo`;
 
-    const name = document.createElement('div');
+ const name = document.createElement('div');
     name.classList.add('name-header-chat');
     name.textContent = data.name;
 
@@ -159,7 +220,6 @@ class Durenchat {
     this.wrapper_element.appendChild(header);
   }
 
-  // Chat container
   defineChatcontainer(containerId: string) {
     if (!this.wrapper_element) {
       throw new Error('O elemento do wrapper não foi encontrado.');
@@ -173,7 +233,6 @@ class Durenchat {
     this.wrapper_element.appendChild(chatContainer);
   }
 
-  // Footer
   defineFooter() {
     if (!this.wrapper_element) {
       throw new Error('O elemento do wrapper não foi encontrado.');
