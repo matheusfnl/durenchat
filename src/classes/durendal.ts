@@ -391,7 +391,7 @@ class Durenchat {
     const iconSpan = document.createElement('span');
     const iconImg = document.createElement('img');
     iconImg.classList.add('footer-icon');
-    iconImg.src = new URL(iconPath, import.meta.url).href;
+    iconImg.src = '';
     iconImg.alt = altText;
     iconSpan.appendChild(iconImg);
     return iconSpan;

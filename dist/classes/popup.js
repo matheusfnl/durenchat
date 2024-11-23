@@ -38,7 +38,7 @@ class Popup {
     createIcon(iconPath, altText) {
         const iconImg = document.createElement('img');
         iconImg.classList.add('popup-icon');
-        iconImg.src = new URL(iconPath, import.meta.url).href;
+        iconImg.src = '';
         iconImg.alt = altText;
         iconImg.style.width = '40px';
         iconImg.style.height = '40px';
@@ -55,7 +55,7 @@ class Popup {
     openChat() {
         if (!this.chat)
             return;
-        this.iconElement.src = new URL('../icons/close.svg', import.meta.url).href;
+        this.iconElement.src = '';
         this.chatContainer = document.createElement('div');
         this.chatContainer.id = 'popup-chat-container';
         this.chatContainer.style.position = 'absolute';
@@ -76,7 +76,7 @@ class Popup {
     }
     closeChat() {
         if (this.chatContainer) {
-            this.iconElement.src = new URL('../icons/chat.svg', import.meta.url).href;
+            this.iconElement.src = '';
             this.container.removeChild(this.chatContainer);
             this.chatContainer = null;
         }
