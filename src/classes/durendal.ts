@@ -264,6 +264,7 @@ class Durenchat {
       editButton.addEventListener('click', () => {
         const messageId = this.optionsElement?.dataset.messageId;
         if (messageId) {
+          this.emit('edit-message', messageId);
           console.log(`Editar mensagem com ID: ${messageId}`);
         }
       });
@@ -273,6 +274,7 @@ class Durenchat {
       deleteButton.addEventListener('click', () => {
         const messageId = this.optionsElement?.dataset.messageId;
         if (messageId) {
+          this.emit('delete-message', messageId);
           console.log(`Apagar mensagem com ID: ${messageId}`);
         }
       });
