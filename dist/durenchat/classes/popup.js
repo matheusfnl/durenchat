@@ -1,9 +1,13 @@
 class Popup {
+    config;
+    container;
+    popupElement;
+    iconElement;
+    chat = null;
+    isOpen = false;
+    chatContainer = null;
     constructor(config) {
         this.config = config;
-        this.chat = null;
-        this.isOpen = false;
-        this.chatContainer = null;
         this.container = document.querySelector(config.container);
         if (!this.container) {
             throw new Error(`Container ${config.container} not found`);

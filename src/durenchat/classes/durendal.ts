@@ -94,24 +94,40 @@ class Durenchat {
       sender: user,
     });
 
-    this.messages.push(new_message);
-    this.appendMessageToChat(new_message);
+    // Inserir a mensagem na posição correta com base na data
+    const index = this.messages.findIndex(m => new Date(m.sent_at) > new Date(new_message.sent_at));
+    if (index === -1) {
+      this.messages.push(new_message);
+    } else {
+      this.messages.splice(index, 0, new_message);
+    }
+
+    this.appendMessageToChat(new_message, index);
     this.emit('message-sent', new_message);
 
     return new_message;
   }
 
   // Método para adicionar a mensagem ao chat
-  private appendMessageToChat(message: Message) {
+  private appendMessageToChat(message: Message, index: number) {
     const messageWrapper = this.createMessageWrapper(message);
     const messageBaloon = this.createMessageBaloon(message);
 
     messageWrapper.appendChild(messageBaloon);
 
     if (this.chat_element) {
-      this.chat_element.appendChild(messageWrapper);
+      if (index === -1 || index >= this.chat_element.children.length) {
+        this.chat_element.appendChild(messageWrapper);
+      } else {
+        this.chat_element.insertBefore(messageWrapper, this.chat_element.children[index]);
+      }
+
+      // Verificar se a mensagem foi enviada pelo usuário atual
+      if (message.sender.id === this.self.id) {
+        this.chat_element.scrollTop = this.chat_element.scrollHeight;
+      }
     } else {
-      throw new Error('O elemento chat_wrapper não foi encontrado.');
+      throw new Error('O elemento chat_element não foi encontrado.');
     }
   }
 

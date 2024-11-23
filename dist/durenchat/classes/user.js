@@ -1,6 +1,10 @@
 export class User {
+    id;
+    name;
+    color;
+    photoUrl;
+    text_color = '#000000';
     constructor({ id, name, color, text_color, photoUrl, }) {
-        this.text_color = '#000000';
         this.id = id;
         this.name = name;
         this.color = color;

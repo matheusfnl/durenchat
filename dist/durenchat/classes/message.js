@@ -1,7 +1,9 @@
 export class Message {
+    sender;
+    content;
+    sent_at = new Date();
+    edited_at = null;
     constructor({ sender, content, sent_at = new Date(), edited_at }) {
-        this.sent_at = new Date();
-        this.edited_at = null;
         this.sender = sender;
         this.content = content;
         this.sent_at = sent_at;
