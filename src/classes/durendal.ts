@@ -1,5 +1,7 @@
 import 'emoji-picker-element';
 
+const MicRecorder = require('mic-recorder-to-mp3');
+
 import { Chat, MessageConfig, UserConstructor, MessageContent } from "../utills/types";
 import { Message } from './message';
 import { User } from './user';
@@ -14,11 +16,14 @@ class Durenchat {
   type: string;
   messages: Message[] = [];
   events: { [key: string]: EventListener[] } = {};
+  private recorder: any;
+  private isRecording: boolean = false;
 
   constructor(chat: Chat) {
     this.type = chat.type;
     this.users = this.initializeUsers(chat.users);
     this.self = this.getUser(chat.self);
+    this.recorder = new MicRecorder({ bitRate: 128 });
 
     const container = document.createElement('div');
     container.style.height = '100%';
@@ -349,35 +354,15 @@ class Durenchat {
     inputText.classList.add('input-text');
     inputText.type = 'text';
     inputText.placeholder = 'Digite uma mensagem...';
-    inputText.addEventListener('keydown', (event) => {
-      if (event.key === 'Enter') {
-        const messageContent = inputText.value.trim();
-        if (messageContent) {
-          this.sendMessage({
-            sender: this.self.id,
-            content: messageContent,
-            sent_at: new Date(),
-          });
-          inputText.value = '';
-        }
-      }
-    });
+    inputText.addEventListener('keydown', (event) => this.handleInputKeydown(event, inputText));
 
     const fileInput = document.createElement('input');
     fileInput.type = 'file';
     fileInput.style.display = 'none';
     fileInput.accept = 'image/*,video/*,application/pdf,audio/mpeg';
 
-    documentIcon.addEventListener('click', () => {
-      fileInput.click();
-    });
-
-    fileInput.addEventListener('change', (event) => {
-      const file = (event.target as HTMLInputElement).files?.[0];
-      if (file) {
-        this.handleFileDrop(file);
-      }
-    });
+    documentIcon.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', (event) => this.handleFileSelected(event));
 
     const emojiPicker = document.createElement('emoji-picker');
     emojiPicker.classList.add('light');
@@ -388,24 +373,10 @@ class Durenchat {
     emojiPicker.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.1)';
     document.body.appendChild(emojiPicker);
 
-    emojiIcon.addEventListener('click', () => {
-      const rect = emojiIcon.getBoundingClientRect();
-      emojiPicker.style.top = `${rect.top - 420}px`;
-      emojiPicker.style.left = `${rect.left}px`;
-      emojiPicker.style.display = 'block';
-    });
-
-    emojiPicker.addEventListener('emoji-click', (event) => {
-      const customEvent = event as CustomEvent<{ unicode: string }>;
-      inputText.value += customEvent.detail.unicode;
-      emojiPicker.style.display = 'none';
-    });
-
-    document.addEventListener('click', (event) => {
-      if (!emojiPicker.contains(event.target as Node) && !emojiIcon.contains(event.target as Node)) {
-        emojiPicker.style.display = 'none';
-      }
-    });
+    emojiIcon.addEventListener('click', () => this.handleEmojiClick(emojiPicker, emojiIcon));
+    emojiPicker.addEventListener('emoji-click', (event) => this.handleEmojiPickerClick(event, inputText, emojiPicker));
+    document.addEventListener('click', (event) => this.handleOutsideEmojiClick(event, emojiPicker, emojiIcon));
+    audioIcon.addEventListener('click', this.handleAudioIconClick.bind(this));
 
     footer.appendChild(emojiIcon);
     footer.appendChild(documentIcon);
@@ -425,6 +396,80 @@ class Durenchat {
     iconImg.alt = altText;
     iconSpan.appendChild(iconImg);
     return iconSpan;
+  }
+
+  private handleInputKeydown(event: KeyboardEvent, inputText: HTMLInputElement) {
+    if (event.key === 'Enter') {
+      const messageContent = inputText.value.trim();
+      if (messageContent) {
+        this.sendMessage({
+          sender: this.self.id,
+          content: messageContent,
+          sent_at: new Date(),
+        });
+        inputText.value = '';
+      }
+    }
+  }
+
+  private handleFileSelected(event: Event) {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (file) {
+      this.handleFileDrop(file);
+    }
+  }
+
+  private handleEmojiClick(emojiPicker: HTMLElement, emojiIcon: HTMLElement) {
+    const rect = emojiIcon.getBoundingClientRect();
+    emojiPicker.style.top = `${rect.top - 420}px`;
+    emojiPicker.style.left = `${rect.left}px`;
+    emojiPicker.style.display = 'block';
+  }
+
+  private handleEmojiPickerClick(
+    event: Event,
+    inputText: HTMLInputElement,
+    emojiPicker: HTMLElement
+  ) {
+      const customEvent = event as CustomEvent<{ unicode: string }>;
+      inputText.value += customEvent.detail.unicode;
+      emojiPicker.style.display = 'none';
+  }
+
+  private handleOutsideEmojiClick(event: MouseEvent, emojiPicker: HTMLElement, emojiIcon: HTMLElement) {
+    if (!emojiPicker.contains(event.target as Node) && !emojiIcon.contains(event.target as Node)) {
+      emojiPicker.style.display = 'none';
+    }
+  }
+
+  private handleAudioIconClick() {
+    if (!this.isRecording) {
+      this.recorder
+        .start()
+        .then(() => this.isRecording = true)
+        .catch((e: any) => console.error(e));
+    } else {
+      this.recorder
+        .stop()
+        .getMp3()
+        .then(([buffer, blob]: [ArrayBuffer[], Blob]) => {
+          const file = new File(buffer, 'recording.mp3', {
+            type: blob.type,
+            lastModified: Date.now()
+          });
+
+          const audioUrl = URL.createObjectURL(file);
+
+          this.sendMessage({
+            sender: this.self.id,
+            content: { type: 'audio', url: audioUrl },
+            sent_at: new Date(),
+          });
+
+          this.isRecording = false;
+        })
+        .catch((e: any) => console.error(e));
+    }
   }
 }
 

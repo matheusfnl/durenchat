@@ -10,6 +10,7 @@
     "build:watch": "webpack --watch"
   },
   "dependencies": {
-    "emoji-picker-element": "^1.24.0"
+    "emoji-picker-element": "^1.24.0",
+    "mic-recorder-to-mp3": "^2.2.2"
   }
 }
