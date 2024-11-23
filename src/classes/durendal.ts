@@ -67,7 +67,7 @@ class Durenchat {
   }
 
   // Método para disparar eventos
-  private emit(event: string, data: any) {
+  private emit(event: string, data?: any) {
     if (!this.events[event]) return;
     this.events[event].forEach(listener => listener(data));
   }
@@ -304,6 +304,7 @@ class Durenchat {
       if (files && files.length > 0) {
         const file = files[0];
         this.handleFileDrop(file);
+        this.emit('file-dropped', file);
       }
     });
   }
@@ -420,6 +421,7 @@ class Durenchat {
     const file = (event.target as HTMLInputElement).files?.[0];
     if (file) {
       this.handleFileDrop(file);
+      this.emit('file-uploaded', file);
     }
   }
 
@@ -450,7 +452,11 @@ class Durenchat {
       this.recorder.start().then(() => {
         this.isRecording = true;
         this.toggleFooterVisibility();
-      }).catch((e: any) => console.error(e));
+        this.emit('audio-start');
+      }).catch((e: any) => {
+        console.error(e);
+        this.emit('audio-error', e);
+      });
     }
   }
 
@@ -512,13 +518,18 @@ class Durenchat {
 
       this.isRecording = false;
       this.toggleFooterVisibility();
-    }).catch((e: any) => console.error(e));
+      this.emit('audio-finish', audioUrl);
+    }).catch((e: any) => {
+      console.error(e);
+      this.emit('audio-error', e);
+    });
   }
 
   private handleCancelRecordingClick() {
     this.recorder.stop();
     this.isRecording = false;
     this.toggleFooterVisibility();
+    this.emit('audio-cancel');
   }
 }
 
