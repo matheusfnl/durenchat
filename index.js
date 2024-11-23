@@ -1,4 +1,4 @@
-import { durenchat, popup } from './dist/durenchat/index.js';
+import { durenchat, popup } from './dist/index.js';
 
 // top-left, top-right, bottom-left, bottom-right
 const popupChat = popup({
