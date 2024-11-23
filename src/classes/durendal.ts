@@ -13,6 +13,7 @@ class Durenchat {
   private chatElement: HTMLElement | null = null;
   private footerElement: HTMLElement | null = null;
   private audioFooterElement: HTMLElement | null = null;
+  private optionsElement: HTMLElement | null = null;
   private self: User;
   private users: User[] = [];
   private messages: Message[] = [];
@@ -109,7 +110,8 @@ class Durenchat {
       this.messages.splice(index, 0, new_message);
     }
 
-    this.appendMessageToChat(new_message, index);
+    const messageElement = this.appendMessageToChat(new_message, index);
+    new_message.setElement(messageElement);
     this.emit('message-sent', new_message);
 
     return new_message;
@@ -129,13 +131,14 @@ class Durenchat {
         this.chatElement.insertBefore(messageWrapper, this.chatElement.children[index]);
       }
 
-      // Verificar se a mensagem foi enviada pelo usuário atual
       if (message.sender.id === this.self.id) {
         this.chatElement.scrollTop = this.chatElement.scrollHeight;
       }
     } else {
       throw new Error('O elemento chatElement não foi encontrado.');
     }
+
+    return messageWrapper;
   }
 
   // Método para criar o contêiner da mensagem
@@ -152,6 +155,7 @@ class Durenchat {
     messageBaloon.classList.add('chat-message');
     messageBaloon.style.backgroundColor = message.sender.color;
     messageBaloon.style.color = message.sender.text_color;
+    messageBaloon.style.position = 'relative';
 
     const messageContent = document.createElement('div');
     messageContent.classList.add('chat-message-content');
@@ -163,14 +167,130 @@ class Durenchat {
     }
 
     const messageInfo = document.createElement('div');
-    messageInfo.classList.add('chat-message-date');
-    messageInfo.textContent = message.sent_at.toLocaleString('pt-BR');
-    messageInfo.style.opacity = '0.7';
+    messageInfo.classList.add('chat-message-info');
+
+    const messageDate = document.createElement('div');
+    messageDate.classList.add('chat-message-date');
+    messageDate.textContent = message.sent_at.toLocaleString('pt-BR');
+    messageDate.style.opacity = '0.7';
+
+    const statusIcon = document.createElement('img');
+    statusIcon.classList.add('chat-message-status');
+    statusIcon.src = '';
+    statusIcon.alt = message.getStatus();
+
+    messageInfo.appendChild(messageDate);
+    messageInfo.appendChild(statusIcon);
 
     messageBaloon.appendChild(messageContent);
     messageBaloon.appendChild(messageInfo);
 
+    if (message.sender.id === this.self.id) {
+      const optionsContainer = document.createElement('span');
+      optionsContainer.style.position = 'absolute';
+      optionsContainer.style.top = '6px';
+      optionsContainer.style.right = '6px';
+      optionsContainer.style.backgroundColor = message.sender.color;
+      optionsContainer.style.display = 'none';
+      optionsContainer.style.cursor = 'pointer';
+      optionsContainer.style.padding = '4px';
+      optionsContainer.style.borderRadius = '50%';
+      optionsContainer.style.boxShadow = `0 0 5px 5px ${message.sender.color}80`;
+
+      const optionsImg = document.createElement('img');
+      optionsImg.classList.add('options-icon');
+      optionsImg.src = '';
+      optionsImg.alt = 'options';
+
+      optionsContainer.appendChild(optionsImg);
+      optionsContainer.dataset.messageId = message.id.toString();
+
+      messageBaloon.appendChild(optionsContainer);
+
+      messageBaloon.addEventListener('mouseover', () => {
+        optionsContainer.style.display = 'flex';
+      });
+
+      messageBaloon.addEventListener('mouseout', () => {
+        optionsContainer.style.display = 'none';
+      });
+
+      optionsContainer.addEventListener('click', (event) => {
+        event.stopPropagation();
+        this.showOptionsElement(optionsContainer);
+      });
+
+      document.addEventListener('click', (event) => {
+        if (this.optionsElement && this.optionsElement.style.display === 'flex') {
+          const target = event.target as Node;
+          if (!this.optionsElement.contains(target)) {
+            this.hideOptionsElement();
+          }
+        }
+      });
+    }
+
     return messageBaloon;
+  }
+
+  // Método para mostrar o optionsElement
+  private showOptionsElement(optionsContainer: HTMLElement) {
+    this.initializeOptionsElement();
+
+    if (this.optionsElement && this.chatElement) {
+      const rect = optionsContainer.getBoundingClientRect();
+      const chatRect = this.chatElement.getBoundingClientRect();
+      const topPosition = rect.top - chatRect.top + optionsContainer.offsetHeight;
+      const rightPosition = window.innerWidth - rect.right;
+
+      this.optionsElement.style.top = `${topPosition}px`;
+      this.optionsElement.style.right = `${rightPosition + 10}px`;
+      this.optionsElement.style.display = 'flex';
+      this.optionsElement.dataset.messageId = optionsContainer.dataset.messageId;
+    }
+  }
+
+  // Método para inicializar o optionsElement
+  private initializeOptionsElement() {
+    if (!this.optionsElement) {
+      this.optionsElement = document.createElement('div');
+      this.optionsElement.classList.add('options-element');
+      this.optionsElement.style.position = 'absolute';
+      this.optionsElement.style.display = 'flex';
+
+      const editButton = document.createElement('button');
+      editButton.textContent = 'Editar mensagem';
+      editButton.style.marginBottom = '5px';
+      editButton.addEventListener('click', () => {
+        const messageId = this.optionsElement?.dataset.messageId;
+        if (messageId) {
+          console.log(`Editar mensagem com ID: ${messageId}`);
+        }
+      });
+
+      const deleteButton = document.createElement('button');
+      deleteButton.textContent = 'Apagar mensagem';
+      deleteButton.addEventListener('click', () => {
+        const messageId = this.optionsElement?.dataset.messageId;
+        if (messageId) {
+          console.log(`Apagar mensagem com ID: ${messageId}`);
+        }
+      });
+
+      this.optionsElement.appendChild(editButton);
+      this.optionsElement.appendChild(deleteButton);
+
+      if (this.chatElement) {
+        this.chatElement.appendChild(this.optionsElement);
+      }
+    }
+  }
+
+  // Método para esconder o optionsElement
+  private hideOptionsElement() {
+    if (this.optionsElement) {
+      this.optionsElement.style.display = 'none';
+    }
   }
 
   // Método para adicionar conteúdo ao balão da mensagem

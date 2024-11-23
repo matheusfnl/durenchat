@@ -18,6 +18,7 @@ export interface MessageConstructor {
   content: MessageContent;
   sent_at?: Date;
   edited_at?: Date;
+  status?: 'sent' | 'delivered' | 'read';
 }
 export interface MessageConfig {
   sender: number | string;

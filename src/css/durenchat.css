@@ -70,8 +70,15 @@ emoji-picker {
   max-width: 60%;
 }
 
-.chat-message-date {
+.chat-message-info {
   margin-left: 10px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  gap: 4px;
+}
+
+.chat-message-date {
   font-size: 10px;
   display: flex;
   align-items: flex-end;
@@ -81,4 +88,28 @@ emoji-picker {
 .max-message-content {
   max-width: 100%;
   border-radius: 8px;
+}
+
+.options-element {
+  background-color: #ffffff;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 4px;
+  z-index: 15;
+  flex-direction: column;
+  gap: 0px;
+  border-radius: 8px;
+}
+
+.options-element button {
+  border: none;
+  outline: none;
+  background-color: transparent;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.options-element button:hover {
+  background-color: #ebebeb;
+  border-radius: 4px;
 }

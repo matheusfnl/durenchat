@@ -43,27 +43,32 @@ chat.render('durenchat');
 chat.sendMessage({
   sender: 2,
   content: 'Olá',
+  status: 'delivered',
 });
 
 chat.sendMessage({
   sender: 2,
   content: { type: 'image', url: 'https://letsenhance.io/static/73136da51c245e80edc6ccfe44888a99/1015f/MainBefore.jpg', caption: 'Isso é o caption' },
+  status: 'delivered',
 });
 
 chat.sendMessage({
   sender: 2,
   content: { type: 'document', url: 'https://example.com/document.pdf', name: 'Documento', caption: 'Isso é o caption' },
   sent_at: new Date('2021-08-10T15:00:00'),
+  status: 'delivered',
 });
 
 chat.sendMessage({
   sender: 2,
   content: { type: 'audio', url: 'https://example.com/audio.mp3' },
+  status: 'read',
 });
 
 chat.sendMessage({
   sender: 2,
   content: { type: 'video', url: 'https://example.com/video.mp4', caption: 'Isso é o caption' },
+  status: 'read',
 });
 
 chat.sendMessage({
@@ -87,7 +92,11 @@ chat.sendMessage({
   sent_at: new Date('2021-08-10T15:00:00'),
 });
 
-chat.sendMessage({
+const message = chat.sendMessage({
   sender: 1,
   content: { type: 'video', url: 'https://example.com/video.mp4', caption: 'Isso é o caption' },
 });
+
+message.setStatus('delivered');
+
+console.log(chat);
