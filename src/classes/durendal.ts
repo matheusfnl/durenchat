@@ -9,18 +9,18 @@ import { User } from './user';
 type EventListener = (data: any) => void;
 
 class Durenchat {
-  wrapper_element: HTMLElement;
-  chat_element: HTMLElement | null = null;
-  self: User;
-  users: User[] = [];
-  type: string;
-  messages: Message[] = [];
-  events: { [key: string]: EventListener[] } = {};
+  private wrapperElement: HTMLElement;
+  private chatElement: HTMLElement | null = null;
+  private footerElement: HTMLElement | null = null;
+  private audioFooterElement: HTMLElement | null = null;
+  private self: User;
+  private users: User[] = [];
+  private messages: Message[] = [];
+  private events: { [key: string]: EventListener[] } = {};
   private recorder: any;
   private isRecording: boolean = false;
 
   constructor(chat: Chat) {
-    this.type = chat.type;
     this.users = this.initializeUsers(chat.users);
     this.self = this.getUser(chat.self);
     this.recorder = new MicRecorder({ bitRate: 128 });
@@ -31,17 +31,17 @@ class Durenchat {
     container.style.flexDirection = 'column';
     container.style.boxSizing = 'border-box';
 
-    this.wrapper_element = container;
+    this.wrapperElement = container;
   }
 
   // Método para renderizar o chat em um elemento específico
-  render(containerId: string) {
+  public render(containerId: string) {
     const container = document.querySelector(`#${containerId}`) as HTMLElement;
     if (!container) {
       throw new Error(`Container with ID ${containerId} not found`);
     }
 
-    container.appendChild(this.wrapper_element);
+    container.appendChild(this.wrapperElement);
   }
 
   // Método para inicializar os usuários
@@ -53,7 +53,7 @@ class Durenchat {
   }
 
   // Método para adicionar ouvintes de eventos
-  on(event: string, listener: EventListener) {
+  public on(event: string, listener: EventListener) {
     if (!this.events[event]) {
       this.events[event] = [];
     }
@@ -61,19 +61,19 @@ class Durenchat {
   }
 
   // Método para remover ouvintes de eventos
-  off(event: string, listener: EventListener) {
+  public off(event: string, listener: EventListener) {
     if (!this.events[event]) return;
     this.events[event] = this.events[event].filter(e => e !== listener);
   }
 
   // Método para disparar eventos
-  emit(event: string, data: any) {
+  private emit(event: string, data: any) {
     if (!this.events[event]) return;
     this.events[event].forEach(listener => listener(data));
   }
 
   // Users
-  getUser(id: string | number): User {
+  public getUser(id: string | number): User {
     const user = this.users.find(user => user.id === id);
     if (!user) {
       throw new Error(`User not found`);
@@ -81,20 +81,20 @@ class Durenchat {
     return user;
   }
 
-  addUser(user: UserConstructor): User {
+  public addUser(user: UserConstructor): User {
     const new_user = new User(user);
     this.users.push(new_user);
     return new_user;
   }
 
-  updateUser(user: UserConstructor): User {
+  public updateUser(user: UserConstructor): User {
     const selected_user = this.getUser(user.id);
     selected_user.updateUser(user);
     return selected_user;
   }
 
   // Message
-  sendMessage(message: MessageConfig): Message {
+  public sendMessage(message: MessageConfig): Message {
     const user = this.getUser(message.sender);
     const new_message = new Message({
       ...message,
@@ -122,19 +122,19 @@ class Durenchat {
 
     messageWrapper.appendChild(messageBaloon);
 
-    if (this.chat_element) {
-      if (index === -1 || index >= this.chat_element.children.length) {
-        this.chat_element.appendChild(messageWrapper);
+    if (this.chatElement) {
+      if (index === -1 || index >= this.chatElement.children.length) {
+        this.chatElement.appendChild(messageWrapper);
       } else {
-        this.chat_element.insertBefore(messageWrapper, this.chat_element.children[index]);
+        this.chatElement.insertBefore(messageWrapper, this.chatElement.children[index]);
       }
 
       // Verificar se a mensagem foi enviada pelo usuário atual
       if (message.sender.id === this.self.id) {
-        this.chat_element.scrollTop = this.chat_element.scrollHeight;
+        this.chatElement.scrollTop = this.chatElement.scrollHeight;
       }
     } else {
-      throw new Error('O elemento chat_element não foi encontrado.');
+      throw new Error('O elemento chatElement não foi encontrado.');
     }
   }
 
@@ -250,7 +250,7 @@ class Durenchat {
   }
 
   // Header
-  defineHeader(data: any) {
+  public defineHeader(data: any) {
     const header = document.createElement('div');
     header.classList.add('header-chat');
 
@@ -266,38 +266,38 @@ class Durenchat {
     header.appendChild(img);
     header.appendChild(name);
 
-    this.wrapper_element.appendChild(header);
+    this.wrapperElement.appendChild(header);
   }
 
-  defineChatcontainer(containerId: string) {
+  public defineChatcontainer(containerId: string) {
     const chatContainer = document.createElement('div');
     chatContainer.id = containerId;
     chatContainer.classList.add('chat-container');
 
-    this.chat_element = chatContainer;
-    this.wrapper_element.appendChild(chatContainer);
+    this.chatElement = chatContainer;
+    this.wrapperElement.appendChild(chatContainer);
 
     this.initializeDragAndDrop();
   }
 
   // Método para inicializar arrastar e soltar
   private initializeDragAndDrop() {
-    if (!this.chat_element) {
-      throw new Error('O elemento chat_element não foi encontrado.');
+    if (!this.chatElement) {
+      throw new Error('O elemento chatElement não foi encontrado.');
     }
 
-    this.chat_element.addEventListener('dragover', (event) => {
+    this.chatElement.addEventListener('dragover', (event) => {
       event.preventDefault();
-      this.chat_element?.classList.add('dragover');
+      this.chatElement?.classList.add('dragover');
     });
 
-    this.chat_element.addEventListener('dragleave', () => {
-      this.chat_element?.classList.remove('dragover');
+    this.chatElement.addEventListener('dragleave', () => {
+      this.chatElement?.classList.remove('dragover');
     });
 
-    this.chat_element.addEventListener('drop', (event) => {
+    this.chatElement.addEventListener('drop', (event) => {
       event.preventDefault();
-      this.chat_element?.classList.remove('dragover');
+      this.chatElement?.classList.remove('dragover');
 
       const dragEvent = event as DragEvent;
       const files = dragEvent.dataTransfer?.files;
@@ -342,9 +342,9 @@ class Durenchat {
     return null;
   }
 
-  defineFooter() {
-    const footer = document.createElement('div');
-    footer.classList.add('footer-chat');
+  public defineFooter() {
+    this.footerElement = document.createElement('div');
+    this.footerElement.classList.add('footer-chat');
 
     const emojiIcon = this.createFooterIcon('../icons/emoji.svg', 'Emoji');
     const documentIcon = this.createFooterIcon('../icons/picture.svg', 'Imagem');
@@ -374,17 +374,21 @@ class Durenchat {
     document.body.appendChild(emojiPicker);
 
     emojiIcon.addEventListener('click', () => this.handleEmojiClick(emojiPicker, emojiIcon));
-    emojiPicker.addEventListener('emoji-click', (event) => this.handleEmojiPickerClick(event, inputText, emojiPicker));
+    emojiPicker.addEventListener('emoji-click', (event) => {
+      const customEvent = event as CustomEvent<{ unicode: string }>;
+      this.handleEmojiPickerClick(customEvent, inputText, emojiPicker);
+    });
+
     document.addEventListener('click', (event) => this.handleOutsideEmojiClick(event, emojiPicker, emojiIcon));
     audioIcon.addEventListener('click', this.handleAudioIconClick.bind(this));
 
-    footer.appendChild(emojiIcon);
-    footer.appendChild(documentIcon);
-    footer.appendChild(inputText);
-    footer.appendChild(audioIcon);
-    footer.appendChild(fileInput);
+    this.footerElement.appendChild(emojiIcon);
+    this.footerElement.appendChild(documentIcon);
+    this.footerElement.appendChild(inputText);
+    this.footerElement.appendChild(audioIcon);
+    this.footerElement.appendChild(fileInput);
 
-    this.wrapper_element.appendChild(footer);
+    this.wrapperElement.appendChild(this.footerElement);
   }
 
   // Método para criar ícones do rodapé
@@ -392,7 +396,7 @@ class Durenchat {
     const iconSpan = document.createElement('span');
     const iconImg = document.createElement('img');
     iconImg.classList.add('footer-icon');
-    iconImg.src = '';
+    iconImg.src = iconPath;
     iconImg.alt = altText;
     iconSpan.appendChild(iconImg);
     return iconSpan;
@@ -427,13 +431,12 @@ class Durenchat {
   }
 
   private handleEmojiPickerClick(
-    event: Event,
+    event: CustomEvent<{ unicode: string }>,
     inputText: HTMLInputElement,
-    emojiPicker: HTMLElement
+    emojiPicker: HTMLElement,
   ) {
-      const customEvent = event as CustomEvent<{ unicode: string }>;
-      inputText.value += customEvent.detail.unicode;
-      emojiPicker.style.display = 'none';
+    inputText.value += event.detail.unicode;
+    emojiPicker.style.display = 'none';
   }
 
   private handleOutsideEmojiClick(event: MouseEvent, emojiPicker: HTMLElement, emojiIcon: HTMLElement) {
@@ -444,32 +447,78 @@ class Durenchat {
 
   private handleAudioIconClick() {
     if (!this.isRecording) {
-      this.recorder
-        .start()
-        .then(() => this.isRecording = true)
-        .catch((e: any) => console.error(e));
-    } else {
-      this.recorder
-        .stop()
-        .getMp3()
-        .then(([buffer, blob]: [ArrayBuffer[], Blob]) => {
-          const file = new File(buffer, 'recording.mp3', {
-            type: blob.type,
-            lastModified: Date.now()
-          });
-
-          const audioUrl = URL.createObjectURL(file);
-
-          this.sendMessage({
-            sender: this.self.id,
-            content: { type: 'audio', url: audioUrl },
-            sent_at: new Date(),
-          });
-
-          this.isRecording = false;
-        })
-        .catch((e: any) => console.error(e));
+      this.recorder.start().then(() => {
+        this.isRecording = true;
+        this.toggleFooterVisibility();
+      }).catch((e: any) => console.error(e));
     }
+  }
+
+  private toggleFooterVisibility() {
+    if (this.footerElement) {
+      if (this.isRecording) {
+        this.footerElement.style.display = 'none';
+
+        if (!this.audioFooterElement) {
+          this.createAudioFooter();
+        }
+
+        if (this.audioFooterElement) {
+          this.audioFooterElement.style.display = 'flex';
+          this.audioFooterElement.style.justifyContent = 'flex-end';
+        }
+      } else {
+        this.footerElement.style.display = 'flex';
+
+        if (this.audioFooterElement) {
+          this.audioFooterElement.style.display = 'none';
+        }
+      }
+    }
+  }
+
+  private createAudioFooter() {
+    const audioFooter = document.createElement('div');
+    audioFooter.classList.add('footer-chat');
+    audioFooter.style.display = 'none';
+    this.audioFooterElement = audioFooter;
+
+    const cancelIcon = this.createFooterIcon('../icons/cancel.svg', 'Cancelar');
+    const sendIcon = this.createFooterIcon('../icons/send.svg', 'Enviar');
+
+    cancelIcon.addEventListener('click', () => this.handleCancelRecordingClick());
+    sendIcon.addEventListener('click', () => this.handleStopRecordingClick());
+
+    audioFooter.appendChild(cancelIcon);
+    audioFooter.appendChild(sendIcon);
+
+    this.wrapperElement.appendChild(audioFooter);
+  }
+
+  private handleStopRecordingClick() {
+    this.recorder.stop().getMp3().then(([buffer, blob]: [ArrayBuffer[], Blob]) => {
+      const file = new File(buffer, 'recording.mp3', {
+        type: blob.type,
+        lastModified: Date.now()
+      });
+
+      const audioUrl = URL.createObjectURL(file);
+
+      this.sendMessage({
+        sender: this.self.id,
+        content: { type: 'audio', url: audioUrl },
+        sent_at: new Date(),
+      });
+
+      this.isRecording = false;
+      this.toggleFooterVisibility();
+    }).catch((e: any) => console.error(e));
+  }
+
+  private handleCancelRecordingClick() {
+    this.recorder.stop();
+    this.isRecording = false;
+    this.toggleFooterVisibility();
   }
 }
 
