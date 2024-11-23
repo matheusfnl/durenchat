@@ -1,3 +1,5 @@
+import 'emoji-picker-element';
+
 import { Chat, MessageConfig, UserConstructor, MessageContent } from "../utills/types";
 import { Message } from './message';
 import { User } from './user';
@@ -374,6 +376,34 @@ class Durenchat {
       const file = (event.target as HTMLInputElement).files?.[0];
       if (file) {
         this.handleFileDrop(file);
+      }
+    });
+
+    const emojiPicker = document.createElement('emoji-picker');
+    emojiPicker.classList.add('light');
+    emojiPicker.style.position = 'absolute';
+    emojiPicker.style.display = 'none';
+    emojiPicker.style.backgroundColor = 'white';
+    emojiPicker.style.border = '1px solid #ccc';
+    emojiPicker.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.1)';
+    document.body.appendChild(emojiPicker);
+
+    emojiIcon.addEventListener('click', () => {
+      const rect = emojiIcon.getBoundingClientRect();
+      emojiPicker.style.top = `${rect.top - 420}px`;
+      emojiPicker.style.left = `${rect.left}px`;
+      emojiPicker.style.display = 'block';
+    });
+
+    emojiPicker.addEventListener('emoji-click', (event) => {
+      const customEvent = event as CustomEvent<{ unicode: string }>;
+      inputText.value += customEvent.detail.unicode;
+      emojiPicker.style.display = 'none';
+    });
+
+    document.addEventListener('click', (event) => {
+      if (!emojiPicker.contains(event.target as Node) && !emojiIcon.contains(event.target as Node)) {
+        emojiPicker.style.display = 'none';
       }
     });
 

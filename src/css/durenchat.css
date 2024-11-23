@@ -1,3 +1,10 @@
+emoji-picker {
+  --border-radius: 8px;
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
 .header-chat {
   display: flex;
   align-items: center;
