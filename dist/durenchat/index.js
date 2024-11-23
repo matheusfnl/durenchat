@@ -1,4 +1,8 @@
 import Durenchat from './classes/durendal.js';
-export default function (id, chat) {
-    return new Durenchat(id, chat);
-}
+import Popup from './classes/popup.js';
+export const durenchat = (chat) => {
+    return new Durenchat(chat);
+};
+export const popup = (popup) => {
+    return new Popup(popup);
+};

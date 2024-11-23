@@ -15,4 +15,8 @@ body {
   margin-top: 20px;
 }
 
-#durenchat { height: 700px; }
+#durenchat {
+  height: 700px;
+  border-radius: 8px;
+  border: 1px solid #a6a6a6;
+}

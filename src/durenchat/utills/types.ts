@@ -35,3 +35,11 @@ export interface UserConstructor {
   photoUrl: string;
 }
 
+export interface PopupConfig {
+  container: string;
+  position: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
+  color: string;
+  icon: string;
+  close_icon: string;
+  id: string;
+}

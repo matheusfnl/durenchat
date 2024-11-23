@@ -1,9 +1,11 @@
-import { Chat } from './utills/types.js';
+import { Chat, PopupConfig } from './utills/types.js';
 import Durenchat from './classes/durendal.js';
+import Popup from './classes/popup.js';
 
-export default function(
-  id: string | number,
-  chat: Chat,
-) {
-  return new Durenchat(id, chat);
+export const durenchat = (chat: Chat) => {
+  return new Durenchat(chat);
+}
+
+export const popup = (popup: PopupConfig) => {
+  return new Popup(popup);
 }

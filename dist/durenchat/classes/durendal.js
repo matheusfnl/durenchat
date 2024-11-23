@@ -1,23 +1,28 @@
 import { Message } from './message.js';
 import { User } from './user.js';
 class Durenchat {
-    constructor(id, chat) {
+    constructor(chat) {
         this.chat_element = null;
         this.users = [];
         this.messages = [];
         this.events = {};
         this.type = chat.type;
-        this.wrapper_element = this.getElementById(id);
         this.users = this.initializeUsers(chat.users);
         this.self = this.getUser(chat.self);
+        const container = document.createElement('div');
+        container.style.height = '100%';
+        container.style.display = 'flex';
+        container.style.flexDirection = 'column';
+        container.style.boxSizing = 'border-box';
+        this.wrapper_element = container;
     }
-    // Método para obter o elemento pelo ID
-    getElementById(id) {
-        const element = document.querySelector(`${id}`);
-        if (!element) {
-            throw new Error(`Element with the selector ${id} not found`);
+    // Método para renderizar o chat em um elemento específico
+    render(containerId) {
+        const container = document.querySelector(`#${containerId}`);
+        if (!container) {
+            throw new Error(`Container with ID ${containerId} not found`);
         }
-        return element;
+        container.appendChild(this.wrapper_element);
     }
     // Método para inicializar os usuários
     initializeUsers(users) {
@@ -188,9 +193,6 @@ class Durenchat {
     }
     // Header
     defineHeader(data) {
-        if (!this.wrapper_element) {
-            throw new Error('O elemento do wrapper não foi encontrado.');
-        }
         const header = document.createElement('div');
         header.classList.add('header-chat');
         const img = document.createElement('img');
@@ -205,13 +207,9 @@ class Durenchat {
         this.wrapper_element.appendChild(header);
     }
     defineChatcontainer(containerId) {
-        if (!this.wrapper_element) {
-            throw new Error('O elemento do wrapper não foi encontrado.');
-        }
         const chatContainer = document.createElement('div');
         chatContainer.id = containerId;
         chatContainer.classList.add('chat-container');
-        console.log(chatContainer);
         this.chat_element = chatContainer;
         this.wrapper_element.appendChild(chatContainer);
         this.initializeDragAndDrop();
@@ -270,9 +268,6 @@ class Durenchat {
         return null;
     }
     defineFooter() {
-        if (!this.wrapper_element) {
-            throw new Error('O elemento do wrapper não foi encontrado.');
-        }
         const footer = document.createElement('div');
         footer.classList.add('footer-chat');
         const emojiIcon = this.createFooterIcon('../icons/emoji.svg', 'Emoji');

@@ -1,11 +1,3 @@
-#durenchat * { box-sizing: border-box; }
-#durenchat {
-  display: flex;
-  flex-direction: column;
-  border-radius: 8px;
-  border: 1px solid #a6a6a6;
-}
-
 .header-chat {
   display: flex;
   align-items: center;
