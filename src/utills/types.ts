@@ -1,4 +1,4 @@
-import { User } from '../classes/user.js';
+import { User } from '../classes/user';
 
 export type MessageContent =
   | string

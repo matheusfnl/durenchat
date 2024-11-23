@@ -1,13 +1,10 @@
-import { durenchat, popup } from './dist/index.js';
-
-// top-left, top-right, bottom-left, bottom-right
-const popupChat = popup({
+const popupChat = Durenchat.popup({
   container: 'body',
   color: '#5cc1ff',
   id: 'popup-container',
 });
 
-const chat = durenchat({
+const chat = Durenchat.durenchat({
   type: 'chatbox',
   users: [
     {

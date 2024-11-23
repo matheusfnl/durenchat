@@ -1,4 +1,4 @@
-import { UserConstructor } from "../utills/types.js";
+import { UserConstructor } from "../utills/types";
 
 export class User {
   id: string | number;

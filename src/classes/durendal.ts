@@ -1,6 +1,6 @@
-import { Chat, MessageConfig, UserConstructor, MessageContent } from "../utills/types.js";
-import { Message } from './message.js';
-import { User } from './user.js';
+import { Chat, MessageConfig, UserConstructor, MessageContent } from "../utills/types";
+import { Message } from './message';
+import { User } from './user';
 
 type EventListener = (data: any) => void;
 

@@ -1,5 +1,5 @@
-import { MessageConstructor, MessageContent } from '../utills/types.js'
-import { User } from './user.js';
+import { MessageConstructor, MessageContent } from '../utills/types'
+import { User } from './user';
 
 export class Message {
   sender: User;
