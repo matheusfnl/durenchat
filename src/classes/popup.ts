@@ -75,7 +75,7 @@ class Popup {
     this.chatContainer.style.height = '60%';
     this.chatContainer.style.backgroundColor = '#fff';
     this.chatContainer.style.boxShadow = '0 0 10px rgba(0, 0, 0, 0.1)';
-    this.chatContainer.style.zIndex = '1001';
+    this.chatContainer.style.zIndex = '5';
     this.chatContainer.style.borderRadius = '5px';
     this.chatContainer.style.overflow = 'hidden';
     this.chatContainer.style.display = 'flex';

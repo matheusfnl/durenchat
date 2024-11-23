@@ -3,6 +3,7 @@ emoji-picker {
   border: none !important;
   box-shadow: none !important;
   background: transparent !important;
+  z-index: 10;
 }
 
 .header-chat {
