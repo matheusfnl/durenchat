@@ -47,6 +47,7 @@ class Durenchat {
     container.style.boxSizing = 'border-box';
 
     this.wrapperElement = container;
+    this.emit('chat-initialized');
   }
 
   /**
@@ -127,6 +128,7 @@ class Durenchat {
   public addUser(user: UserConstructor): User {
     const new_user = new User(user);
     this.users.push(new_user);
+    this.emit('user-added', new_user);
     return new_user;
   }
 
@@ -138,6 +140,7 @@ class Durenchat {
   public updateUser(user: UserConstructor): User {
     const selected_user = this.getUser(user.id);
     selected_user.updateUser(user);
+    this.emit('user-updated', selected_user);
     return selected_user;
   }
 
@@ -417,7 +420,7 @@ class Durenchat {
         }
       }
 
-      this.emit('edit-message', this.contextMenuMessage.getId());
+      this.emit('start-message-edit', this.contextMenuMessage.getId());
     }
   }
 
@@ -435,7 +438,7 @@ class Durenchat {
           messageElement.parentNode.removeChild(messageElement);
         }
 
-        this.emit('delete-message', this.contextMenuMessage.getId());
+        this.emit('message-deleted', this.contextMenuMessage.getId());
       }
     }
   }
