@@ -95,6 +95,14 @@ class Durenchat {
   }
 
   // Message
+  public getMessage(id: string | number): Message {
+    const message = this.messages.find(message => +message.id === +id);
+    if (!message) {
+      throw new Error(`Message not found`);
+    }
+    return message;
+  }
+
   public sendMessage(message: MessageConfig): Message {
     const user = this.getUser(message.sender);
     const new_message = new Message({
@@ -238,6 +246,20 @@ class Durenchat {
     this.initializeOptionsElement();
 
     if (this.optionsElement && this.chatElement) {
+      const messageId = optionsContainer.dataset.messageId;
+      this.optionsElement.dataset.messageId = messageId;
+
+      if (messageId) {
+        const message = this.getMessage(messageId);
+        const editButton = this.optionsElement.getElementsByClassName('edit-button')[0] as HTMLElement;
+
+        if (typeof message.content === 'object' && message.content.type === 'audio') {
+            editButton.style.display = 'none';
+        } else {
+            editButton.style.display = 'block';
+        }
+      }
+
       const rect = optionsContainer.getBoundingClientRect();
       const chatRect = this.chatElement.getBoundingClientRect();
       const topPosition = rect.top - chatRect.top + optionsContainer.offsetHeight;
@@ -246,7 +268,6 @@ class Durenchat {
       this.optionsElement.style.top = `${topPosition}px`;
       this.optionsElement.style.right = `${rightPosition + 10}px`;
       this.optionsElement.style.display = 'flex';
-      this.optionsElement.dataset.messageId = optionsContainer.dataset.messageId;
     }
   }
 
@@ -259,6 +280,7 @@ class Durenchat {
       this.optionsElement.style.display = 'flex';
 
       const editButton = document.createElement('button');
+      editButton.classList.add('edit-button');
       editButton.textContent = 'Editar mensagem';
       editButton.style.marginBottom = '5px';
       editButton.addEventListener('click', () => {
@@ -266,25 +288,42 @@ class Durenchat {
         if (messageId) {
           this.emit('edit-message', messageId);
           console.log(`Editar mensagem com ID: ${messageId}`);
-        }
-      });
-
-      const deleteButton = document.createElement('button');
-      deleteButton.textContent = 'Apagar mensagem';
-      deleteButton.addEventListener('click', () => {
-        const messageId = this.optionsElement?.dataset.messageId;
-        if (messageId) {
-          this.emit('delete-message', messageId);
-          console.log(`Apagar mensagem com ID: ${messageId}`);
+          this.hideOptionsElement();
         }
       });
 
       this.optionsElement.appendChild(editButton);
+
+      const deleteButton = document.createElement('button');
+      deleteButton.classList.add('delete-button');
+      deleteButton.textContent = 'Apagar mensagem';
+      deleteButton.addEventListener('click', () => {
+        const messageId = this.optionsElement?.dataset.messageId;
+        if (messageId) {
+          this.deleteMessage(messageId);
+          this.hideOptionsElement();
+        }
+      });
+
       this.optionsElement.appendChild(deleteButton);
 
       if (this.chatElement) {
         this.chatElement.appendChild(this.optionsElement);
       }
+    }
+  }
+
+  private deleteMessage(messageId: string) {
+    const messageIndex = this.messages.findIndex(message => message.id.toString() === messageId);
+    if (messageIndex !== -1) {
+      const [removedMessage] = this.messages.splice(messageIndex, 1);
+
+      const messageElement = removedMessage.getElement();
+      if (messageElement && messageElement.parentNode) {
+        messageElement.parentNode.removeChild(messageElement);
+      }
+
+      this.emit('delete-message', messageId);
     }
   }
 
