@@ -1,0 +1,925 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Test Durenchat class > should define chat container 1`] = `
+<div
+  style="height: 100%; display: flex; flex-direction: column; box-sizing: border-box;"
+>
+  <div
+    class="header-chat"
+  >
+    <img
+      alt="Matheus photo"
+      class="img-header-chat"
+      src=""
+    />
+    <div
+      class="name-header-chat"
+    >
+      Matheus
+    </div>
+  </div>
+  <div
+    class="chat-container"
+    id="dc-messages"
+  />
+</div>
+`;
+
+exports[`Test Durenchat class > should define footer 1`] = `
+<div
+  style="height: 100%; display: flex; flex-direction: column; box-sizing: border-box;"
+>
+  <div
+    class="header-chat"
+  >
+    <img
+      alt="Matheus photo"
+      class="img-header-chat"
+      src=""
+    />
+    <div
+      class="name-header-chat"
+    >
+      Matheus
+    </div>
+  </div>
+  <div
+    class="chat-container"
+    id="dc-messages"
+  />
+  <div
+    class="footer-chat"
+  >
+    <div
+      class="footer-container"
+    />
+    <div
+      class="footer-container"
+    />
+    <input
+      class="input-text"
+      placeholder="Digite uma mensagem..."
+      type="text"
+    />
+    <div
+      class="footer-container"
+    />
+    <input
+      accept="image/*,video/*,application/pdf,audio/mpeg"
+      style="display: none;"
+      type="file"
+    />
+  </div>
+</div>
+`;
+
+exports[`Test Durenchat class > should define header 1`] = `
+<div
+  style="height: 100%; display: flex; flex-direction: column; box-sizing: border-box;"
+>
+  <div
+    class="header-chat"
+  >
+    <img
+      alt="Matheus photo"
+      class="img-header-chat"
+      src=""
+    />
+    <div
+      class="name-header-chat"
+    >
+      Matheus
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Test Durenchat class > should match snapshot 1`] = `
+Durenchat {
+  "audioFooterElement": null,
+  "chatElement": <div
+    class="chat-container"
+    id="dc-messages"
+  >
+    <div
+      class="message-container message-container-sender"
+    >
+      <div
+        class="chat-message"
+        style="background-color: rgb(74, 61, 31); color: rgb(255, 255, 255); position: relative;"
+      >
+        <div
+          class="chat-message-content"
+        >
+          Olá
+        </div>
+        <div
+          class="chat-message-info"
+        >
+          <div
+            class="chat-message-date"
+            style="opacity: 0.7;"
+          >
+            21:00
+          </div>
+          <div
+            class="chat-message-status"
+          />
+        </div>
+        <span
+          data-message-id="1"
+          style="position: absolute; top: 6px; right: 6px; background-color: rgb(74, 61, 31); display: none; cursor: pointer; border-radius: 4px; box-shadow: 0 0 5px 5px #4a3d1f80;"
+        >
+          <div
+            class="options-icon"
+          />
+        </span>
+      </div>
+    </div>
+    <div
+      class="message-container message-container-sender"
+    >
+      <div
+        class="chat-message"
+        style="background-color: rgb(74, 61, 31); color: rgb(255, 255, 255); position: relative;"
+      >
+        <div
+          class="chat-message-content"
+        >
+          <img
+            alt="Imagem"
+            class="max-message-content"
+            src="https://example.com/image.jpg"
+          />
+          <div
+            class="message-caption"
+          >
+            Texto
+          </div>
+        </div>
+        <div
+          class="chat-message-info"
+        >
+          <div
+            class="chat-message-date"
+            style="opacity: 0.7;"
+          >
+            21:00
+          </div>
+          <div
+            class="chat-message-status"
+          />
+        </div>
+        <span
+          data-message-id="2"
+          style="position: absolute; top: 6px; right: 6px; background-color: rgb(74, 61, 31); display: none; cursor: pointer; border-radius: 4px; box-shadow: 0 0 5px 5px #4a3d1f80;"
+        >
+          <div
+            class="options-icon"
+          />
+        </span>
+      </div>
+    </div>
+    <div
+      class="message-container message-container-sender"
+    >
+      <div
+        class="chat-message"
+        style="background-color: rgb(74, 61, 31); color: rgb(255, 255, 255); position: relative;"
+      >
+        <div
+          class="chat-message-content"
+        >
+          <audio
+            class="max-message-content"
+            controls=""
+          >
+            <source
+              src="https://example.com/audio.mp3"
+              type="audio/mpeg"
+            />
+          </audio>
+        </div>
+        <div
+          class="chat-message-info"
+        >
+          <div
+            class="chat-message-date"
+            style="opacity: 0.7;"
+          >
+            21:00
+          </div>
+          <div
+            class="chat-message-status"
+          />
+        </div>
+        <span
+          data-message-id="3"
+          style="position: absolute; top: 6px; right: 6px; background-color: rgb(74, 61, 31); display: none; cursor: pointer; border-radius: 4px; box-shadow: 0 0 5px 5px #4a3d1f80;"
+        >
+          <div
+            class="options-icon"
+          />
+        </span>
+      </div>
+    </div>
+    <div
+      class="message-container message-container-sender"
+    >
+      <div
+        class="chat-message"
+        style="background-color: rgb(74, 61, 31); color: rgb(255, 255, 255); position: relative;"
+      >
+        <div
+          class="chat-message-content"
+        >
+          <video
+            class="max-message-content"
+            controls=""
+          >
+            <source
+              src="https://example.com/video.mp4"
+              type="video/mp4"
+            />
+          </video>
+          <div
+            class="message-caption"
+          />
+        </div>
+        <div
+          class="chat-message-info"
+        >
+          <div
+            class="chat-message-date"
+            style="opacity: 0.7;"
+          >
+            21:00
+          </div>
+          <div
+            class="chat-message-status"
+          />
+        </div>
+        <span
+          data-message-id="4"
+          style="position: absolute; top: 6px; right: 6px; background-color: rgb(74, 61, 31); display: none; cursor: pointer; border-radius: 4px; box-shadow: 0 0 5px 5px #4a3d1f80;"
+        >
+          <div
+            class="options-icon"
+          />
+        </span>
+      </div>
+    </div>
+    <div
+      class="message-container message-container-sender"
+    >
+      <div
+        class="chat-message"
+        style="background-color: rgb(74, 61, 31); color: rgb(255, 255, 255); position: relative;"
+      >
+        <div
+          class="chat-message-content"
+        >
+          <a
+            class="max-message-content"
+            href="https://example.com/document.pdf"
+            target="_blank"
+          />
+          <div
+            class="message-caption"
+          />
+        </div>
+        <div
+          class="chat-message-info"
+        >
+          <div
+            class="chat-message-date"
+            style="opacity: 0.7;"
+          >
+            21:00
+          </div>
+          <div
+            class="chat-message-status"
+          />
+        </div>
+        <span
+          data-message-id="5"
+          style="position: absolute; top: 6px; right: 6px; background-color: rgb(74, 61, 31); display: none; cursor: pointer; border-radius: 4px; box-shadow: 0 0 5px 5px #4a3d1f80;"
+        >
+          <div
+            class="options-icon"
+          />
+        </span>
+      </div>
+    </div>
+  </div>,
+  "contextMenuMessage": null,
+  "editingMessage": null,
+  "events": {},
+  "footerElement": <div
+    class="footer-chat"
+  >
+    <div
+      class="footer-container"
+    />
+    <div
+      class="footer-container"
+    />
+    <input
+      class="input-text"
+      placeholder="Digite uma mensagem..."
+      type="text"
+    />
+    <div
+      class="footer-container"
+    />
+    <input
+      accept="image/*,video/*,application/pdf,audio/mpeg"
+      style="display: none;"
+      type="file"
+    />
+  </div>,
+  "icons": {},
+  "isRecording": false,
+  "messages": [
+    Message {
+      "content": "Olá",
+      "edited_at": null,
+      "element": <div
+        class="message-container message-container-sender"
+      >
+        <div
+          class="chat-message"
+          style="background-color: rgb(74, 61, 31); color: rgb(255, 255, 255); position: relative;"
+        >
+          <div
+            class="chat-message-content"
+          >
+            Olá
+          </div>
+          <div
+            class="chat-message-info"
+          >
+            <div
+              class="chat-message-date"
+              style="opacity: 0.7;"
+            >
+              21:00
+            </div>
+            <div
+              class="chat-message-status"
+            />
+          </div>
+          <span
+            data-message-id="1"
+            style="position: absolute; top: 6px; right: 6px; background-color: rgb(74, 61, 31); display: none; cursor: pointer; border-radius: 4px; box-shadow: 0 0 5px 5px #4a3d1f80;"
+          >
+            <div
+              class="options-icon"
+            />
+          </span>
+        </div>
+      </div>,
+      "id": 1,
+      "sender": User {
+        "color": "#4a3d1f",
+        "id": 1,
+        "name": "Matheus",
+        "photoUrl": "",
+        "textColor": "#fff",
+      },
+      "sent_at": 2024-12-12T00:00:00.000Z,
+      "status": "sent",
+    },
+    Message {
+      "content": {
+        "caption": "Texto",
+        "type": "image",
+        "url": "https://example.com/image.jpg",
+      },
+      "edited_at": null,
+      "element": <div
+        class="message-container message-container-sender"
+      >
+        <div
+          class="chat-message"
+          style="background-color: rgb(74, 61, 31); color: rgb(255, 255, 255); position: relative;"
+        >
+          <div
+            class="chat-message-content"
+          >
+            <img
+              alt="Imagem"
+              class="max-message-content"
+              src="https://example.com/image.jpg"
+            />
+            <div
+              class="message-caption"
+            >
+              Texto
+            </div>
+          </div>
+          <div
+            class="chat-message-info"
+          >
+            <div
+              class="chat-message-date"
+              style="opacity: 0.7;"
+            >
+              21:00
+            </div>
+            <div
+              class="chat-message-status"
+            />
+          </div>
+          <span
+            data-message-id="2"
+            style="position: absolute; top: 6px; right: 6px; background-color: rgb(74, 61, 31); display: none; cursor: pointer; border-radius: 4px; box-shadow: 0 0 5px 5px #4a3d1f80;"
+          >
+            <div
+              class="options-icon"
+            />
+          </span>
+        </div>
+      </div>,
+      "id": 2,
+      "sender": User {
+        "color": "#4a3d1f",
+        "id": 1,
+        "name": "Matheus",
+        "photoUrl": "",
+        "textColor": "#fff",
+      },
+      "sent_at": 2024-12-12T00:00:00.000Z,
+      "status": "sent",
+    },
+    Message {
+      "content": {
+        "type": "audio",
+        "url": "https://example.com/audio.mp3",
+      },
+      "edited_at": null,
+      "element": <div
+        class="message-container message-container-sender"
+      >
+        <div
+          class="chat-message"
+          style="background-color: rgb(74, 61, 31); color: rgb(255, 255, 255); position: relative;"
+        >
+          <div
+            class="chat-message-content"
+          >
+            <audio
+              class="max-message-content"
+              controls=""
+            >
+              <source
+                src="https://example.com/audio.mp3"
+                type="audio/mpeg"
+              />
+            </audio>
+          </div>
+          <div
+            class="chat-message-info"
+          >
+            <div
+              class="chat-message-date"
+              style="opacity: 0.7;"
+            >
+              21:00
+            </div>
+            <div
+              class="chat-message-status"
+            />
+          </div>
+          <span
+            data-message-id="3"
+            style="position: absolute; top: 6px; right: 6px; background-color: rgb(74, 61, 31); display: none; cursor: pointer; border-radius: 4px; box-shadow: 0 0 5px 5px #4a3d1f80;"
+          >
+            <div
+              class="options-icon"
+            />
+          </span>
+        </div>
+      </div>,
+      "id": 3,
+      "sender": User {
+        "color": "#4a3d1f",
+        "id": 1,
+        "name": "Matheus",
+        "photoUrl": "",
+        "textColor": "#fff",
+      },
+      "sent_at": 2024-12-12T00:00:00.000Z,
+      "status": "sent",
+    },
+    Message {
+      "content": {
+        "type": "video",
+        "url": "https://example.com/video.mp4",
+      },
+      "edited_at": null,
+      "element": <div
+        class="message-container message-container-sender"
+      >
+        <div
+          class="chat-message"
+          style="background-color: rgb(74, 61, 31); color: rgb(255, 255, 255); position: relative;"
+        >
+          <div
+            class="chat-message-content"
+          >
+            <video
+              class="max-message-content"
+              controls=""
+            >
+              <source
+                src="https://example.com/video.mp4"
+                type="video/mp4"
+              />
+            </video>
+            <div
+              class="message-caption"
+            />
+          </div>
+          <div
+            class="chat-message-info"
+          >
+            <div
+              class="chat-message-date"
+              style="opacity: 0.7;"
+            >
+              21:00
+            </div>
+            <div
+              class="chat-message-status"
+            />
+          </div>
+          <span
+            data-message-id="4"
+            style="position: absolute; top: 6px; right: 6px; background-color: rgb(74, 61, 31); display: none; cursor: pointer; border-radius: 4px; box-shadow: 0 0 5px 5px #4a3d1f80;"
+          >
+            <div
+              class="options-icon"
+            />
+          </span>
+        </div>
+      </div>,
+      "id": 4,
+      "sender": User {
+        "color": "#4a3d1f",
+        "id": 1,
+        "name": "Matheus",
+        "photoUrl": "",
+        "textColor": "#fff",
+      },
+      "sent_at": 2024-12-12T00:00:00.000Z,
+      "status": "sent",
+    },
+    Message {
+      "content": {
+        "type": "document",
+        "url": "https://example.com/document.pdf",
+      },
+      "edited_at": null,
+      "element": <div
+        class="message-container message-container-sender"
+      >
+        <div
+          class="chat-message"
+          style="background-color: rgb(74, 61, 31); color: rgb(255, 255, 255); position: relative;"
+        >
+          <div
+            class="chat-message-content"
+          >
+            <a
+              class="max-message-content"
+              href="https://example.com/document.pdf"
+              target="_blank"
+            />
+            <div
+              class="message-caption"
+            />
+          </div>
+          <div
+            class="chat-message-info"
+          >
+            <div
+              class="chat-message-date"
+              style="opacity: 0.7;"
+            >
+              21:00
+            </div>
+            <div
+              class="chat-message-status"
+            />
+          </div>
+          <span
+            data-message-id="5"
+            style="position: absolute; top: 6px; right: 6px; background-color: rgb(74, 61, 31); display: none; cursor: pointer; border-radius: 4px; box-shadow: 0 0 5px 5px #4a3d1f80;"
+          >
+            <div
+              class="options-icon"
+            />
+          </span>
+        </div>
+      </div>,
+      "id": 5,
+      "sender": User {
+        "color": "#4a3d1f",
+        "id": 1,
+        "name": "Matheus",
+        "photoUrl": "",
+        "textColor": "#fff",
+      },
+      "sent_at": 2024-12-12T00:00:00.000Z,
+      "status": "sent",
+    },
+  ],
+  "optionsElement": null,
+  "prefix": "",
+  "recorder": MicRecorder {
+    "activeStream": null,
+    "config": {
+      "bitRate": 128,
+      "deviceId": null,
+      "startRecordingAt": 300,
+    },
+    "context": null,
+    "microphone": null,
+    "processor": null,
+    "startTime": 0,
+  },
+  "self": User {
+    "color": "#4a3d1f",
+    "id": 1,
+    "name": "Matheus",
+    "photoUrl": "",
+    "textColor": "#fff",
+  },
+  "users": [
+    User {
+      "color": "#4a3d1f",
+      "id": 1,
+      "name": "Matheus",
+      "photoUrl": "",
+      "textColor": "#fff",
+    },
+  ],
+  "wrapperElement": <div
+    style="height: 100%; display: flex; flex-direction: column; box-sizing: border-box;"
+  >
+    <div
+      class="header-chat"
+    >
+      <img
+        alt="Matheus photo"
+        class="img-header-chat"
+        src=""
+      />
+      <div
+        class="name-header-chat"
+      >
+        Matheus
+      </div>
+    </div>
+    <div
+      class="chat-container"
+      id="dc-messages"
+    >
+      <div
+        class="message-container message-container-sender"
+      >
+        <div
+          class="chat-message"
+          style="background-color: rgb(74, 61, 31); color: rgb(255, 255, 255); position: relative;"
+        >
+          <div
+            class="chat-message-content"
+          >
+            Olá
+          </div>
+          <div
+            class="chat-message-info"
+          >
+            <div
+              class="chat-message-date"
+              style="opacity: 0.7;"
+            >
+              21:00
+            </div>
+            <div
+              class="chat-message-status"
+            />
+          </div>
+          <span
+            data-message-id="1"
+            style="position: absolute; top: 6px; right: 6px; background-color: rgb(74, 61, 31); display: none; cursor: pointer; border-radius: 4px; box-shadow: 0 0 5px 5px #4a3d1f80;"
+          >
+            <div
+              class="options-icon"
+            />
+          </span>
+        </div>
+      </div>
+      <div
+        class="message-container message-container-sender"
+      >
+        <div
+          class="chat-message"
+          style="background-color: rgb(74, 61, 31); color: rgb(255, 255, 255); position: relative;"
+        >
+          <div
+            class="chat-message-content"
+          >
+            <img
+              alt="Imagem"
+              class="max-message-content"
+              src="https://example.com/image.jpg"
+            />
+            <div
+              class="message-caption"
+            >
+              Texto
+            </div>
+          </div>
+          <div
+            class="chat-message-info"
+          >
+            <div
+              class="chat-message-date"
+              style="opacity: 0.7;"
+            >
+              21:00
+            </div>
+            <div
+              class="chat-message-status"
+            />
+          </div>
+          <span
+            data-message-id="2"
+            style="position: absolute; top: 6px; right: 6px; background-color: rgb(74, 61, 31); display: none; cursor: pointer; border-radius: 4px; box-shadow: 0 0 5px 5px #4a3d1f80;"
+          >
+            <div
+              class="options-icon"
+            />
+          </span>
+        </div>
+      </div>
+      <div
+        class="message-container message-container-sender"
+      >
+        <div
+          class="chat-message"
+          style="background-color: rgb(74, 61, 31); color: rgb(255, 255, 255); position: relative;"
+        >
+          <div
+            class="chat-message-content"
+          >
+            <audio
+              class="max-message-content"
+              controls=""
+            >
+              <source
+                src="https://example.com/audio.mp3"
+                type="audio/mpeg"
+              />
+            </audio>
+          </div>
+          <div
+            class="chat-message-info"
+          >
+            <div
+              class="chat-message-date"
+              style="opacity: 0.7;"
+            >
+              21:00
+            </div>
+            <div
+              class="chat-message-status"
+            />
+          </div>
+          <span
+            data-message-id="3"
+            style="position: absolute; top: 6px; right: 6px; background-color: rgb(74, 61, 31); display: none; cursor: pointer; border-radius: 4px; box-shadow: 0 0 5px 5px #4a3d1f80;"
+          >
+            <div
+              class="options-icon"
+            />
+          </span>
+        </div>
+      </div>
+      <div
+        class="message-container message-container-sender"
+      >
+        <div
+          class="chat-message"
+          style="background-color: rgb(74, 61, 31); color: rgb(255, 255, 255); position: relative;"
+        >
+          <div
+            class="chat-message-content"
+          >
+            <video
+              class="max-message-content"
+              controls=""
+            >
+              <source
+                src="https://example.com/video.mp4"
+                type="video/mp4"
+              />
+            </video>
+            <div
+              class="message-caption"
+            />
+          </div>
+          <div
+            class="chat-message-info"
+          >
+            <div
+              class="chat-message-date"
+              style="opacity: 0.7;"
+            >
+              21:00
+            </div>
+            <div
+              class="chat-message-status"
+            />
+          </div>
+          <span
+            data-message-id="4"
+            style="position: absolute; top: 6px; right: 6px; background-color: rgb(74, 61, 31); display: none; cursor: pointer; border-radius: 4px; box-shadow: 0 0 5px 5px #4a3d1f80;"
+          >
+            <div
+              class="options-icon"
+            />
+          </span>
+        </div>
+      </div>
+      <div
+        class="message-container message-container-sender"
+      >
+        <div
+          class="chat-message"
+          style="background-color: rgb(74, 61, 31); color: rgb(255, 255, 255); position: relative;"
+        >
+          <div
+            class="chat-message-content"
+          >
+            <a
+              class="max-message-content"
+              href="https://example.com/document.pdf"
+              target="_blank"
+            />
+            <div
+              class="message-caption"
+            />
+          </div>
+          <div
+            class="chat-message-info"
+          >
+            <div
+              class="chat-message-date"
+              style="opacity: 0.7;"
+            >
+              21:00
+            </div>
+            <div
+              class="chat-message-status"
+            />
+          </div>
+          <span
+            data-message-id="5"
+            style="position: absolute; top: 6px; right: 6px; background-color: rgb(74, 61, 31); display: none; cursor: pointer; border-radius: 4px; box-shadow: 0 0 5px 5px #4a3d1f80;"
+          >
+            <div
+              class="options-icon"
+            />
+          </span>
+        </div>
+      </div>
+    </div>
+    <div
+      class="footer-chat"
+    >
+      <div
+        class="footer-container"
+      />
+      <div
+        class="footer-container"
+      />
+      <input
+        class="input-text"
+        placeholder="Digite uma mensagem..."
+        type="text"
+      />
+      <div
+        class="footer-container"
+      />
+      <input
+        accept="image/*,video/*,application/pdf,audio/mpeg"
+        style="display: none;"
+        type="file"
+      />
+    </div>
+  </div>,
+}
+`;

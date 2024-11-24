@@ -20,7 +20,7 @@ class Durenchat {
   private isRecording: boolean = false;
   private contextMenuMessage: Message | null = null;
   private editingMessage: Message | null = null;
-  private icons: ChatIcons;
+  private icons: ChatIcons = {};
   private prefix: string = '';
 
   /**
@@ -31,7 +31,10 @@ class Durenchat {
     this.users = this.initializeUsers(chat.users);
     this.self = this.getUser(chat.self);
     this.recorder = new MicRecorder({ bitRate: 128 });
-    this.icons = chat.icons;
+
+    if (chat.icons) {
+      this.icons = chat.icons;
+    }
 
     if (chat.prefix) {
       this.prefix = chat.prefix;
@@ -736,7 +739,7 @@ class Durenchat {
    * @returns Elemento HTML do ícone.
    */
 
-  private createIcon(iconPath: string, iconClass: string) {
+  private createIcon(iconPath: string | undefined = '', iconClass: string) {
     const iconContainer = document.createElement('div');
     iconContainer.innerHTML = iconPath;
 
@@ -748,7 +751,7 @@ class Durenchat {
   }
 
   private getStatusIcon(message: Message): string {
-    return this.icons[message.getStatus()];
+    return this.icons[message.getStatus()] || '';
   }
 
   /**

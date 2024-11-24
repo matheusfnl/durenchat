@@ -55,13 +55,13 @@ export type ChatEvents = { [key: string]: ChatEventListener[] }
 export type ChatEventListener = (data: any) => void;
 
 export type ChatIcons = {
-  sent: string,
-  delivered: string,
-  read: string,
-  options: string,
-  cancelEdit: string,
-  emoji: string,
-  file: string,
-  microphone: string,
-  send: string,
+  sent?: string,
+  delivered?: string,
+  read?: string,
+  options?: string,
+  cancelEdit?: string,
+  emoji?: string,
+  file?: string,
+  microphone?: string,
+  send?: string,
 }
