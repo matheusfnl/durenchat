@@ -20,6 +20,8 @@ class Durenchat {
   private events: { [key: string]: EventListener[] } = {};
   private recorder: any;
   private isRecording: boolean = false;
+  private contextMenuMessage: Message | null = null;
+  private editingMessage: Message | null = null;
 
   constructor(chat: Chat) {
     this.users = this.initializeUsers(chat.users);
@@ -110,7 +112,6 @@ class Durenchat {
       sender: user,
     });
 
-    // Inserir a mensagem na posição correta com base na data
     const index = this.messages.findIndex(m => new Date(m.sent_at) > new Date(new_message.sent_at));
     if (index === -1) {
       this.messages.push(new_message);
@@ -246,18 +247,14 @@ class Durenchat {
     this.initializeOptionsElement();
 
     if (this.optionsElement && this.chatElement) {
-      const messageId = optionsContainer.dataset.messageId;
-      this.optionsElement.dataset.messageId = messageId;
+      const message = this.getMessage(optionsContainer.dataset.messageId as string);
+      this.contextMenuMessage = message;
 
-      if (messageId) {
-        const message = this.getMessage(messageId);
-        const editButton = this.optionsElement.getElementsByClassName('edit-button')[0] as HTMLElement;
-
-        if (typeof message.content === 'object' && message.content.type === 'audio') {
-            editButton.style.display = 'none';
-        } else {
-            editButton.style.display = 'block';
-        }
+      const editButton = this.optionsElement.getElementsByClassName('edit-button')[0] as HTMLElement;
+      if (typeof message.content === 'object' && message.content.type === 'audio') {
+        editButton.style.display = 'none';
+      } else {
+        editButton.style.display = 'block';
       }
 
       const rect = optionsContainer.getBoundingClientRect();
@@ -284,12 +281,8 @@ class Durenchat {
       editButton.textContent = 'Editar mensagem';
       editButton.style.marginBottom = '5px';
       editButton.addEventListener('click', () => {
-        const messageId = this.optionsElement?.dataset.messageId;
-        if (messageId) {
-          this.emit('edit-message', messageId);
-          console.log(`Editar mensagem com ID: ${messageId}`);
-          this.hideOptionsElement();
-        }
+        this.editMessage();
+        this.hideOptionsElement();
       });
 
       this.optionsElement.appendChild(editButton);
@@ -298,11 +291,8 @@ class Durenchat {
       deleteButton.classList.add('delete-button');
       deleteButton.textContent = 'Apagar mensagem';
       deleteButton.addEventListener('click', () => {
-        const messageId = this.optionsElement?.dataset.messageId;
-        if (messageId) {
-          this.deleteMessage(messageId);
-          this.hideOptionsElement();
-        }
+        this.deleteMessage();
+        this.hideOptionsElement();
       });
 
       this.optionsElement.appendChild(deleteButton);
@@ -313,23 +303,67 @@ class Durenchat {
     }
   }
 
-  private deleteMessage(messageId: string) {
-    const messageIndex = this.messages.findIndex(message => message.id.toString() === messageId);
-    if (messageIndex !== -1) {
-      const [removedMessage] = this.messages.splice(messageIndex, 1);
+  private editMessage() {
+    if (this.contextMenuMessage) {
+      const message = this.getMessage(this.contextMenuMessage.id);
+      const inputText = this.footerElement?.querySelector('.input-text') as HTMLInputElement;
 
-      const messageElement = removedMessage.getElement();
-      if (messageElement && messageElement.parentNode) {
-        messageElement.parentNode.removeChild(messageElement);
+      this.editingMessage = message;
+
+      if (inputText) {
+        if (typeof message.content === 'string') {
+          inputText.value = message.content;
+        } else if (message.content.type !== 'audio' && message.content.caption) {
+          inputText.value = message.content.caption;
+        }
+
+        let cancelSpan = this.footerElement?.querySelector('.cancel-span') as HTMLElement;
+        if (!cancelSpan) {
+          cancelSpan = document.createElement('span');
+          cancelSpan.classList.add('cancel-span');
+          cancelSpan.style.cursor = 'pointer';
+
+          const cancelImg = document.createElement('img');
+          cancelImg.alt = 'Cancelar';
+          cancelImg.src = '';
+          cancelSpan.appendChild(cancelImg);
+
+          cancelSpan.addEventListener('click', () => {
+            inputText.value = '';
+            this.editingMessage = null;
+            cancelSpan.style.display = 'none';
+          });
+
+          inputText.parentNode?.insertBefore(cancelSpan, inputText.nextSibling);
+        } else {
+          cancelSpan.style.display = 'inline';
+        }
       }
 
-      this.emit('delete-message', messageId);
+      this.emit('edit-message', this.contextMenuMessage.id);
+    }
+  }
+
+  private deleteMessage() {
+    if (this.contextMenuMessage) {
+      const messageIndex = this.messages.findIndex(message => message.id.toString() === `${this.contextMenuMessage?.id}`);
+      if (messageIndex !== -1) {
+        const [removedMessage] = this.messages.splice(messageIndex, 1);
+
+        const messageElement = removedMessage.getElement();
+        if (messageElement && messageElement.parentNode) {
+          messageElement.parentNode.removeChild(messageElement);
+        }
+
+        this.emit('delete-message', this.contextMenuMessage.id);
+      }
     }
   }
 
   // Método para esconder o optionsElement
   private hideOptionsElement() {
     if (this.optionsElement) {
+      this.contextMenuMessage = null;
       this.optionsElement.style.display = 'none';
     }
   }
@@ -568,12 +602,24 @@ class Durenchat {
     if (event.key === 'Enter') {
       const messageContent = inputText.value.trim();
       if (messageContent) {
-        this.sendMessage({
-          sender: this.self.id,
-          content: messageContent,
-          sent_at: new Date(),
-        });
-        inputText.value = '';
+        if (! this.editingMessage) {
+          this.sendMessage({
+            sender: this.self.id,
+            content: messageContent,
+            sent_at: new Date(),
+          });
+          inputText.value = '';
+        } else {
+          this.editingMessage.setMessageText(messageContent)
+          this.emit('message-updated', this.editingMessage);
+          this.editingMessage = null;
+          inputText.value = '';
+
+          const cancelSpan = this.footerElement?.querySelector('.cancel-span') as HTMLElement;
+          if (cancelSpan) {
+              cancelSpan.style.display = 'none';
+          }
+        }
       }
     }
   }

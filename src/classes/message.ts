@@ -60,6 +60,31 @@ export class Message {
     }
   }
 
+    // Método para atualizar o texto da mensagem
+    public setMessageText(newContent: string): void {
+      if (typeof this.content === 'string') {
+        this.content = newContent;
+      } else if (this.content.type !== 'audio') {
+        this.content.caption = newContent;
+      }
+
+      this.edited_at = new Date();
+      this.updateMessageContentInDOM();
+    }
+
+    // Função para atualizar o conteúdo da mensagem no DOM
+    private updateMessageContentInDOM(): void {
+      if (this.element) {
+        if (typeof this.content === 'string') {
+          const messageContentElement = this.element.querySelector('.chat-message-content') as HTMLElement;
+          messageContentElement.textContent = this.content;
+        } else if (this.content.type !== 'audio') {
+          const caption = this.element.querySelector('.message-caption') as HTMLElement;
+          caption.textContent = this.content.caption || '';
+        }
+      }
+    }
+
   // Método estático para gerar um ID único
   private static generateId(): number {
     return ++Message.lastId;
