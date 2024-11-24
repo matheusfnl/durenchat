@@ -646,6 +646,7 @@ class Durenchat {
   ) {
     inputText.value += event.detail.unicode;
     emojiPicker.style.display = 'none';
+    inputText.focus();
   }
 
   private handleOutsideEmojiClick(event: MouseEvent, emojiPicker: HTMLElement, emojiIcon: HTMLElement) {
