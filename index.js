@@ -1,14 +1,12 @@
-// Função para carregar o SVG como string
 const loadSVG = (path) => {
   return fetch(path)
-    .then(response => response.text())  // Obtém o conteúdo do SVG como texto
+    .then(response => response.text())
     .catch(error => {
       console.error(`Erro ao carregar o SVG de ${path}:`, error);
-      return '';  // Retorna uma string vazia se houver erro no carregamento
+      return '';
     });
 };
 
-// Função para carregar todos os ícones necessários
 const loadIcons = async () => {
   const popupOpen = await loadSVG('./src/icons/chat.svg');
   const popupClose = await loadSVG('./src/icons/close.svg');
@@ -37,7 +35,6 @@ const loadIcons = async () => {
   };
 };
 
-// Carregar os ícones antes de inicializar o chat
 loadIcons().then(icons => {
   const popupChat = Durenchat.popup({
     container: 'body',
@@ -67,7 +64,6 @@ loadIcons().then(icons => {
       }
     ],
     self: 2,
-    prefix: 'chat-1',
     icons: {
       sent: icons.sent,
       delivered: icons.delivered,
@@ -90,8 +86,8 @@ loadIcons().then(icons => {
     name: user.name,
   });
 
-  chat.defineChatcontainer('dc-messages'); // define o id do container que as mensagens vão ser inseridas
-  chat.defineFooter(); // define o footer
+  chat.defineChatcontainer('dc-messages');
+  chat.defineFooter();
 
   chat.render('durenchat');
 

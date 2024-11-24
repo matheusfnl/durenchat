@@ -12,6 +12,7 @@ export type Chat = {
   users: UserConstructor[];
   messages: MessageConstructor[];
   icons: ChatIcons;
+  prefix?: string;
 }
 
 export type MessageConstructor = {

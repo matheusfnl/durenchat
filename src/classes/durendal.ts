@@ -21,6 +21,7 @@ class Durenchat {
   private contextMenuMessage: Message | null = null;
   private editingMessage: Message | null = null;
   private icons: ChatIcons;
+  private prefix: string = '';
 
   /**
    * Construtor da classe Durenchat.
@@ -31,6 +32,10 @@ class Durenchat {
     this.self = this.getUser(chat.self);
     this.recorder = new MicRecorder({ bitRate: 128 });
     this.icons = chat.icons;
+
+    if (chat.prefix) {
+      this.prefix = chat.prefix;
+    }
 
     const container = document.createElement('div');
     container.style.height = '100%';
@@ -208,8 +213,8 @@ class Durenchat {
    */
   private createMessageWrapper(message: Message): HTMLElement {
     const messageWrapper = document.createElement('div');
-    messageWrapper.classList.add('message-container');
-    messageWrapper.classList.add(message.getSender().getId() === this.self?.getId() ? 'message-container-sender' : 'message-container-receiver');
+    this.addClass(messageWrapper, 'message-container');
+    this.addClass(messageWrapper, message.getSender().getId() === this.self?.getId() ? 'message-container-sender' : 'message-container-receiver');
     return messageWrapper;
   }
 
@@ -220,13 +225,13 @@ class Durenchat {
    */
   private createMessageBaloon(message: Message): HTMLElement {
     const messageBaloon = document.createElement('div');
-    messageBaloon.classList.add('chat-message');
+    this.addClass(messageBaloon, 'chat-message');
     messageBaloon.style.backgroundColor = message.getSender().getColor();
     messageBaloon.style.color = message.getSender().getTextColor();
     messageBaloon.style.position = 'relative';
 
     const messageContent = document.createElement('div');
-    messageContent.classList.add('chat-message-content');
+    this.addClass(messageContent, 'chat-message-content');
 
     const content = message.getContent();
 
@@ -237,10 +242,10 @@ class Durenchat {
     }
 
     const messageInfo = document.createElement('div');
-    messageInfo.classList.add('chat-message-info');
+    this.addClass(messageInfo, 'chat-message-info');
 
     const messageDate = document.createElement('div');
-    messageDate.classList.add('chat-message-date');
+    this.addClass(messageDate, 'chat-message-date');
     messageDate.textContent = message.getSentDate().toLocaleTimeString('pt-BR', {
       hour: '2-digit',
       minute: '2-digit',
@@ -338,12 +343,12 @@ class Durenchat {
   private initializeOptionsElement() {
     if (!this.optionsElement) {
       this.optionsElement = document.createElement('div');
-      this.optionsElement.classList.add('options-element');
+      this.addClass(this.optionsElement, 'options-element');
       this.optionsElement.style.position = 'absolute';
       this.optionsElement.style.display = 'flex';
 
       const editButton = document.createElement('button');
-      editButton.classList.add('edit-button');
+      this.addClass(editButton, 'edit-button');
       editButton.textContent = 'Editar mensagem';
       editButton.style.marginBottom = '5px';
       editButton.addEventListener('click', () => {
@@ -354,7 +359,7 @@ class Durenchat {
       this.optionsElement.appendChild(editButton);
 
       const deleteButton = document.createElement('button');
-      deleteButton.classList.add('delete-button');
+      this.addClass(deleteButton, 'delete-button');
       deleteButton.textContent = 'Apagar mensagem';
       deleteButton.addEventListener('click', () => {
         this.deleteMessage();
@@ -391,7 +396,7 @@ class Durenchat {
         let cancelSpan = this.footerElement?.querySelector('.cancel-span') as HTMLElement;
         if (!cancelSpan) {
           cancelSpan = document.createElement('span');
-          cancelSpan.classList.add('cancel-span');
+          this.addClass(cancelSpan, 'cancel-span');
           cancelSpan.style.cursor = 'pointer';
 
           const cancelImg = this.createIcon(this.icons.cancelEdit, 'footer-container');
@@ -468,7 +473,7 @@ class Durenchat {
    */
   private appendImageContent(messageContent: HTMLElement, content: { type: 'image', url: string, caption?: string }) {
     const img = document.createElement('img');
-    img.classList.add('max-message-content');
+    this.addClass(img, 'max-message-content');
     img.src = content.url;
     img.alt = 'Imagem';
     messageContent.appendChild(img);
@@ -482,7 +487,7 @@ class Durenchat {
    */
   private appendDocumentContent(messageContent: HTMLElement, content: { type: 'document', url: string, name: string, caption?: string }) {
     const docLink = document.createElement('a');
-    docLink.classList.add('max-message-content');
+    this.addClass(docLink, 'max-message-content');
     docLink.href = content.url;
     docLink.textContent = content.name;
     docLink.target = '_blank';
@@ -497,7 +502,7 @@ class Durenchat {
    */
   private appendAudioContent(messageContent: HTMLElement, content: { type: 'audio', url: string }) {
     const audio = document.createElement('audio');
-    audio.classList.add('max-message-content');
+    this.addClass(audio, 'max-message-content');
     audio.controls = true;
     const audioSource = document.createElement('source');
     audioSource.src = content.url;
@@ -513,7 +518,7 @@ class Durenchat {
    */
   private appendVideoContent(messageContent: HTMLElement, content: { type: 'video', url: string, caption?: string }) {
     const video = document.createElement('video');
-    video.classList.add('max-message-content');
+    this.addClass(video, 'max-message-content');
     video.controls = true;
     const videoSource = document.createElement('source');
     videoSource.src = content.url;
@@ -525,7 +530,7 @@ class Durenchat {
 
   private appendCaption(contentCaption: string | undefined, messageContent: HTMLElement) {
     const caption = document.createElement('div');
-    caption.classList.add('message-caption');
+    this.addClass(caption, 'message-caption');
 
     if (contentCaption) {
       caption.textContent = contentCaption;
@@ -540,15 +545,15 @@ class Durenchat {
    */
   public defineHeader(data: ChatHeader) {
     const header = document.createElement('div');
-    header.classList.add('header-chat');
+    this.addClass(header, 'header-chat');
 
     const img = document.createElement('img');
-    img.classList.add('img-header-chat');
+    this.addClass(img, 'img-header-chat');
     img.src = data.photoUrl;
     img.alt = `${data.name} photo`;
 
     const name = document.createElement('div');
-    name.classList.add('name-header-chat');
+    this.addClass(name, 'name-header-chat');
     name.textContent = data.name;
 
     header.appendChild(img);
@@ -564,7 +569,7 @@ class Durenchat {
   public defineChatcontainer(containerId: string) {
     const chatContainer = document.createElement('div');
     chatContainer.id = containerId;
-    chatContainer.classList.add('chat-container');
+    this.addClass(chatContainer, 'chat-container');
 
     this.chatElement = chatContainer;
     this.wrapperElement.appendChild(chatContainer);
@@ -582,16 +587,22 @@ class Durenchat {
 
     this.chatElement.addEventListener('dragover', (event) => {
       event.preventDefault();
-      this.chatElement?.classList.add('dragover');
+      if (this.chatElement) {
+        this.addClass(this.chatElement, 'dragover');
+      }
     });
 
     this.chatElement.addEventListener('dragleave', () => {
-      this.chatElement?.classList.remove('dragover');
+      if (this.chatElement) {
+        this.removeClass(this.chatElement, 'dragover');
+      }
     });
 
     this.chatElement.addEventListener('drop', (event) => {
       event.preventDefault();
-      this.chatElement?.classList.remove('dragover');
+      if (this.chatElement) {
+        this.removeClass(this.chatElement, 'dragover');
+      }
 
       const dragEvent = event as DragEvent;
       const files = dragEvent.dataTransfer?.files;
@@ -650,14 +661,14 @@ class Durenchat {
    */
   public defineFooter() {
     this.footerElement = document.createElement('div');
-    this.footerElement.classList.add('footer-chat');
+    this.addClass(this.footerElement, 'footer-chat');
 
     const emojiIcon = this.createIcon(this.icons.emoji, 'footer-container');
     const documentIcon = this.createIcon(this.icons.file, 'footer-container');
     const audioIcon = this.createIcon(this.icons.microphone, 'footer-container');
 
     const inputText = document.createElement('input');
-    inputText.classList.add('input-text');
+    this.addClass(inputText, 'input-text');
     inputText.type = 'text';
     inputText.placeholder = 'Digite uma mensagem...';
     inputText.addEventListener('keydown', (event) => this.handleInputKeydown(event, inputText));
@@ -671,7 +682,7 @@ class Durenchat {
     fileInput.addEventListener('change', (event) => this.handleFileSelected(event));
 
     const emojiPicker = document.createElement('emoji-picker');
-    emojiPicker.classList.add('light');
+    this.addClass(emojiPicker, 'light');
     emojiPicker.style.position = 'absolute';
     emojiPicker.style.display = 'none';
     emojiPicker.style.backgroundColor = 'white';
@@ -709,7 +720,7 @@ class Durenchat {
     iconContainer.innerHTML = iconPath;
 
     if (iconClass) {
-      iconContainer.classList.add(iconClass);
+      this.addClass(iconContainer, iconClass);
     }
 
     return iconContainer;
@@ -847,7 +858,7 @@ class Durenchat {
    */
   private createAudioFooter() {
     const audioFooter = document.createElement('div');
-    audioFooter.classList.add('footer-chat');
+    this.addClass(audioFooter, 'footer-chat');
     audioFooter.style.display = 'none';
     this.audioFooterElement = audioFooter;
 
@@ -898,6 +909,18 @@ class Durenchat {
     this.isRecording = false;
     this.toggleFooterVisibility();
     this.emit('audio-cancel');
+  }
+
+  private addClass(element: HTMLElement, className: string) {
+  const prefix = this.prefix ? `${this.prefix}-` : '';
+
+    element.classList.add(`${prefix}${className}`);
+  }
+
+  private removeClass(element: HTMLElement, className: string)  {
+    const prefix = this.prefix ? `${this.prefix}-` : '';
+
+    element.classList.remove(`${prefix}${className}`);
   }
 }
 
