@@ -543,40 +543,57 @@ class Durenchat {
    * Define o cabeçalho do chat.
    * @param data - Dados do cabeçalho.
    */
-  public defineHeader(data: ChatHeader) {
-    const header = document.createElement('div');
-    this.addClass(header, 'header-chat');
+  public defineHeader(data: ChatHeader | string) {
+    if (typeof data === 'string') {
+      this.wrapperElement.innerHTML += data;
+    } else {
+      const header = document.createElement('div');
+      this.addClass(header, 'header-chat');
 
-    const img = document.createElement('img');
-    this.addClass(img, 'img-header-chat');
-    img.src = data.photoUrl;
-    img.alt = `${data.name} photo`;
+      const img = document.createElement('img');
+      this.addClass(img, 'img-header-chat');
+      img.src = data.photoUrl;
+      img.alt = `${data.name} photo`;
 
-    const name = document.createElement('div');
-    this.addClass(name, 'name-header-chat');
-    name.textContent = data.name;
+      const name = document.createElement('div');
+      this.addClass(name, 'name-header-chat');
+      name.textContent = data.name;
 
-    header.appendChild(img);
-    header.appendChild(name);
+      header.appendChild(img);
+      header.appendChild(name);
 
-    this.wrapperElement.appendChild(header);
+      this.wrapperElement.appendChild(header);
+    }
   }
 
   /**
    * Define o contêiner do chat.
    * @param containerId - ID do contêiner do chat.
    */
-  public defineChatcontainer(containerId: string) {
-    const chatContainer = document.createElement('div');
-    chatContainer.id = containerId;
-    this.addClass(chatContainer, 'chat-container');
+  public defineChatcontainer(containerId: string, html?: string) {
+    let chatContainer: HTMLElement;
+
+    if (html) {
+      const tempContainer = document.createElement('div');
+      tempContainer.innerHTML = html.trim();
+
+      chatContainer = tempContainer.firstElementChild as HTMLElement;
+      if (!chatContainer) {
+        throw new Error('O HTML fornecido não contém um elemento válido.');
+      }
+
+      chatContainer.id = containerId;
+    } else {
+      chatContainer = document.createElement('div');
+      chatContainer.id = containerId;
+      this.addClass(chatContainer, 'chat-container');
+    }
 
     this.chatElement = chatContainer;
     this.wrapperElement.appendChild(chatContainer);
 
     this.initializeDragAndDrop();
   }
-
   /**
    * Inicializa a funcionalidade de arrastar e soltar.
    */
@@ -659,53 +676,57 @@ class Durenchat {
   /**
    * Define o rodapé do chat.
    */
-  public defineFooter() {
-    this.footerElement = document.createElement('div');
-    this.addClass(this.footerElement, 'footer-chat');
+  public defineFooter(html?: string) {
+    if (html) {
+      this.wrapperElement.innerHTML += html;
+    } else {
+      this.footerElement = document.createElement('div');
+      this.addClass(this.footerElement, 'footer-chat');
 
-    const emojiIcon = this.createIcon(this.icons.emoji, 'footer-container');
-    const documentIcon = this.createIcon(this.icons.file, 'footer-container');
-    const audioIcon = this.createIcon(this.icons.microphone, 'footer-container');
+      const emojiIcon = this.createIcon(this.icons.emoji, 'footer-container');
+      const documentIcon = this.createIcon(this.icons.file, 'footer-container');
+      const audioIcon = this.createIcon(this.icons.microphone, 'footer-container');
 
-    const inputText = document.createElement('input');
-    this.addClass(inputText, 'input-text');
-    inputText.type = 'text';
-    inputText.placeholder = 'Digite uma mensagem...';
-    inputText.addEventListener('keydown', (event) => this.handleInputKeydown(event, inputText));
+      const inputText = document.createElement('input');
+      this.addClass(inputText, 'input-text');
+      inputText.type = 'text';
+      inputText.placeholder = 'Digite uma mensagem...';
+      inputText.addEventListener('keydown', (event) => this.handleInputKeydown(event, inputText));
 
-    const fileInput = document.createElement('input');
-    fileInput.type = 'file';
-    fileInput.style.display = 'none';
-    fileInput.accept = 'image/*,video/*,application/pdf,audio/mpeg';
+      const fileInput = document.createElement('input');
+      fileInput.type = 'file';
+      fileInput.style.display = 'none';
+      fileInput.accept = 'image/*,video/*,application/pdf,audio/mpeg';
 
-    documentIcon.addEventListener('click', () => fileInput.click());
-    fileInput.addEventListener('change', (event) => this.handleFileSelected(event));
+      documentIcon.addEventListener('click', () => fileInput.click());
+      fileInput.addEventListener('change', (event) => this.handleFileSelected(event));
 
-    const emojiPicker = document.createElement('emoji-picker');
-    this.addClass(emojiPicker, 'light');
-    emojiPicker.style.position = 'absolute';
-    emojiPicker.style.display = 'none';
-    emojiPicker.style.backgroundColor = 'white';
-    emojiPicker.style.border = '1px solid #ccc';
-    emojiPicker.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.1)';
-    document.body.appendChild(emojiPicker);
+      const emojiPicker = document.createElement('emoji-picker');
+      this.addClass(emojiPicker, 'light');
+      emojiPicker.style.position = 'absolute';
+      emojiPicker.style.display = 'none';
+      emojiPicker.style.backgroundColor = 'white';
+      emojiPicker.style.border = '1px solid #ccc';
+      emojiPicker.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.1)';
+      document.body.appendChild(emojiPicker);
 
-    emojiIcon.addEventListener('click', () => this.handleEmojiClick(emojiPicker, emojiIcon));
-    emojiPicker.addEventListener('emoji-click', (event) => {
-      const customEvent = event as CustomEvent<{ unicode: string }>;
-      this.handleEmojiPickerClick(customEvent, inputText, emojiPicker);
-    });
+      emojiIcon.addEventListener('click', () => this.handleEmojiClick(emojiPicker, emojiIcon));
+      emojiPicker.addEventListener('emoji-click', (event) => {
+        const customEvent = event as CustomEvent<{ unicode: string }>;
+        this.handleEmojiPickerClick(customEvent, inputText, emojiPicker);
+      });
 
-    document.addEventListener('click', (event) => this.handleOutsideEmojiClick(event, emojiPicker, emojiIcon));
-    audioIcon.addEventListener('click', this.handleAudioIconClick.bind(this));
+      document.addEventListener('click', (event) => this.handleOutsideEmojiClick(event, emojiPicker, emojiIcon));
+      audioIcon.addEventListener('click', this.handleAudioIconClick.bind(this));
 
-    this.footerElement.appendChild(emojiIcon);
-    this.footerElement.appendChild(documentIcon);
-    this.footerElement.appendChild(inputText);
-    this.footerElement.appendChild(audioIcon);
-    this.footerElement.appendChild(fileInput);
+      this.footerElement.appendChild(emojiIcon);
+      this.footerElement.appendChild(documentIcon);
+      this.footerElement.appendChild(inputText);
+      this.footerElement.appendChild(audioIcon);
+      this.footerElement.appendChild(fileInput);
 
-    this.wrapperElement.appendChild(this.footerElement);
+      this.wrapperElement.appendChild(this.footerElement);
+    }
   }
 
   /**
