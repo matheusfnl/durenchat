@@ -8,17 +8,17 @@ const loadSVG = (path) => {
 };
 
 const loadIcons = async () => {
-  const popupOpen = await loadSVG('./src/icons/chat.svg');
-  const popupClose = await loadSVG('./src/icons/close.svg');
-  const emoji = await loadSVG('./src/icons/emoji.svg');
-  const microphone = await loadSVG('./src/icons/microphone.svg');
-  const file = await loadSVG('./src/icons/picture.svg');
-  const send = await loadSVG('./src/icons/send.svg');
-  const cancelEdit = await loadSVG('./src/icons/close-circle.svg');
-  const read = await loadSVG('./src/icons/read.svg');
-  const delivered = await loadSVG('./src/icons/delivered.svg');
-  const sent = await loadSVG('./src/icons/sent.svg');
-  const options = await loadSVG('./src/icons/dots.svg');
+  const popupOpen = await loadSVG('./icons/chat.svg');
+  const popupClose = await loadSVG('./icons/close.svg');
+  const emoji = await loadSVG('./icons/emoji.svg');
+  const microphone = await loadSVG('./icons/microphone.svg');
+  const file = await loadSVG('./icons/picture.svg');
+  const send = await loadSVG('./icons/send.svg');
+  const cancelEdit = await loadSVG('./icons/close-circle.svg');
+  const read = await loadSVG('./icons/read.svg');
+  const delivered = await loadSVG('./icons/delivered.svg');
+  const sent = await loadSVG('./icons/sent.svg');
+  const options = await loadSVG('./icons/dots.svg');
 
   return {
     popupOpen,
