@@ -23,6 +23,10 @@ class Durenchat {
   private contextMenuMessage: Message | null = null;
   private editingMessage: Message | null = null;
 
+  /**
+   * Construtor da classe Durenchat.
+   * @param chat - Objeto de configuração do chat.
+   */
   constructor(chat: Chat) {
     this.users = this.initializeUsers(chat.users);
     this.self = this.getUser(chat.self);
@@ -37,7 +41,10 @@ class Durenchat {
     this.wrapperElement = container;
   }
 
-  // Método para renderizar o chat em um elemento específico
+  /**
+   * Método para renderizar o chat em um elemento específico.
+   * @param containerId - ID do contêiner onde o chat será renderizado.
+   */
   public render(containerId: string) {
     const container = document.querySelector(`#${containerId}`) as HTMLElement;
     if (!container) {
@@ -47,15 +54,23 @@ class Durenchat {
     container.appendChild(this.wrapperElement);
   }
 
-  // Método para inicializar os usuários
-  private initializeUsers(users: UserConstructor[]): User[] {
+  /**
+   * Método para inicializar os usuários.
+   * @param users - Array de objetos de configuração de usuários.
+   * @returns Array de instâncias de usuários.
+   */
+  public initializeUsers(users: UserConstructor[]): User[] {
     if (!users || !users.length) {
       throw new Error(`An empty user array was provided`);
     }
     return users.map(user => new User(user));
   }
 
-  // Método para adicionar ouvintes de eventos
+  /**
+   * Método para adicionar ouvintes de eventos.
+   * @param event - Nome do evento.
+   * @param listener - Função ouvinte do evento.
+   */
   public on(event: string, listener: EventListener) {
     if (!this.events[event]) {
       this.events[event] = [];
@@ -63,19 +78,31 @@ class Durenchat {
     this.events[event].push(listener);
   }
 
-  // Método para remover ouvintes de eventos
+  /**
+   * Método para remover ouvintes de eventos.
+   * @param event - Nome do evento.
+   * @param listener - Função ouvinte do evento.
+   */
   public off(event: string, listener: EventListener) {
     if (!this.events[event]) return;
     this.events[event] = this.events[event].filter(e => e !== listener);
   }
 
-  // Método para disparar eventos
+  /**
+   * Método para disparar eventos.
+   * @param event - Nome do evento.
+   * @param data - Dados do evento.
+   */
   private emit(event: string, data?: any) {
     if (!this.events[event]) return;
     this.events[event].forEach(listener => listener(data));
   }
 
-  // Users
+  /**
+   * Método para obter um usuário pelo ID.
+   * @param id - ID do usuário.
+   * @returns Instância do usuário.
+   */
   public getUser(id: string | number): User {
     const user = this.users.find(user => user.id === id);
     if (!user) {
@@ -84,19 +111,33 @@ class Durenchat {
     return user;
   }
 
+  /**
+   * Método para adicionar um novo usuário.
+   * @param user - Objeto de configuração do usuário.
+   * @returns Instância do novo usuário.
+   */
   public addUser(user: UserConstructor): User {
     const new_user = new User(user);
     this.users.push(new_user);
     return new_user;
   }
 
+  /**
+   * Método para atualizar um usuário existente.
+   * @param user - Objeto de configuração do usuário.
+   * @returns Instância do usuário atualizado.
+   */
   public updateUser(user: UserConstructor): User {
     const selected_user = this.getUser(user.id);
     selected_user.updateUser(user);
     return selected_user;
   }
 
-  // Message
+  /**
+   * Método para obter uma mensagem pelo ID.
+   * @param id - ID da mensagem.
+   * @returns Instância da mensagem.
+   */
   public getMessage(id: string | number): Message {
     const message = this.messages.find(message => +message.id === +id);
     if (!message) {
@@ -105,6 +146,11 @@ class Durenchat {
     return message;
   }
 
+  /**
+   * Método para enviar uma mensagem.
+   * @param message - Objeto de configuração da mensagem.
+   * @returns Instância da mensagem enviada.
+   */
   public sendMessage(message: MessageConfig): Message {
     const user = this.getUser(message.sender);
     const new_message = new Message({
@@ -126,7 +172,12 @@ class Durenchat {
     return new_message;
   }
 
-  // Método para adicionar a mensagem ao chat
+  /**
+   * Método para adicionar a mensagem ao chat.
+   * @param message - Instância da mensagem.
+   * @param index - Índice onde a mensagem será inserida.
+   * @returns Elemento HTML da mensagem.
+   */
   private appendMessageToChat(message: Message, index: number) {
     const messageWrapper = this.createMessageWrapper(message);
     const messageBaloon = this.createMessageBaloon(message);
@@ -150,7 +201,11 @@ class Durenchat {
     return messageWrapper;
   }
 
-  // Método para criar o contêiner da mensagem
+  /**
+   * Método para criar o contêiner da mensagem.
+   * @param message - Instância da mensagem.
+   * @returns Elemento HTML do contêiner da mensagem.
+   */
   private createMessageWrapper(message: Message): HTMLElement {
     const messageWrapper = document.createElement('div');
     messageWrapper.classList.add('message-container');
@@ -158,7 +213,11 @@ class Durenchat {
     return messageWrapper;
   }
 
-  // Método para criar o balão da mensagem
+  /**
+   * Método para criar o balão da mensagem.
+   * @param message - Instância da mensagem.
+   * @returns Elemento HTML do balão da mensagem.
+   */
   private createMessageBaloon(message: Message): HTMLElement {
     const messageBaloon = document.createElement('div');
     messageBaloon.classList.add('chat-message');
@@ -242,7 +301,10 @@ class Durenchat {
     return messageBaloon;
   }
 
-  // Método para mostrar o optionsElement
+  /**
+   * Método para mostrar o optionsElement.
+   * @param optionsContainer - Contêiner de opções.
+   */
   private showOptionsElement(optionsContainer: HTMLElement) {
     this.initializeOptionsElement();
 
@@ -268,7 +330,9 @@ class Durenchat {
     }
   }
 
-  // Método para inicializar o optionsElement
+  /**
+   * Método para inicializar o optionsElement.
+   */
   private initializeOptionsElement() {
     if (!this.optionsElement) {
       this.optionsElement = document.createElement('div');
@@ -303,6 +367,9 @@ class Durenchat {
     }
   }
 
+  /**
+   * Método para editar uma mensagem.
+   */
   private editMessage() {
     if (this.contextMenuMessage) {
       const message = this.getMessage(this.contextMenuMessage.id);
@@ -344,6 +411,9 @@ class Durenchat {
     }
   }
 
+  /**
+   * Método para apagar uma mensagem.
+   */
   private deleteMessage() {
     if (this.contextMenuMessage) {
       const messageIndex = this.messages.findIndex(message => message.id.toString() === `${this.contextMenuMessage?.id}`);
@@ -360,7 +430,9 @@ class Durenchat {
     }
   }
 
-  // Método para esconder o optionsElement
+  /**
+   * Método para esconder o optionsElement.
+   */
   private hideOptionsElement() {
     if (this.optionsElement) {
       this.contextMenuMessage = null;
@@ -368,7 +440,11 @@ class Durenchat {
     }
   }
 
-  // Método para adicionar conteúdo ao balão da mensagem
+  /**
+   * Método para adicionar conteúdo ao balão da mensagem.
+   * @param messageContent - Elemento HTML do conteúdo da mensagem.
+   * @param content - Conteúdo da mensagem.
+   */
   private appendContentToMessage(messageContent: HTMLElement, content: Exclude<MessageContent, string>) {
     const contentHandlers: { [key: string]: (content: any) => void } = {
       'image': this.appendImageContent.bind(this, messageContent),
@@ -383,7 +459,11 @@ class Durenchat {
     }
   }
 
-  // Método para adicionar conteúdo de imagem
+  /**
+   * Método para adicionar conteúdo de imagem.
+   * @param messageContent - Elemento HTML do conteúdo da mensagem.
+   * @param content - Conteúdo da imagem.
+   */
   private appendImageContent(messageContent: HTMLElement, content: { type: 'image', url: string, caption?: string }) {
     const img = document.createElement('img');
     img.classList.add('max-message-content');
@@ -398,7 +478,11 @@ class Durenchat {
     }
   }
 
-  // Método para adicionar conteúdo de documento
+  /**
+   * Método para adicionar conteúdo de documento.
+   * @param messageContent - Elemento HTML do conteúdo da mensagem.
+   * @param content - Conteúdo do documento.
+   */
   private appendDocumentContent(messageContent: HTMLElement, content: { type: 'document', url: string, name: string, caption?: string }) {
     const docLink = document.createElement('a');
     docLink.classList.add('max-message-content');
@@ -414,7 +498,11 @@ class Durenchat {
     }
   }
 
-  // Método para adicionar conteúdo de áudio
+  /**
+   * Método para adicionar conteúdo de áudio.
+   * @param messageContent - Elemento HTML do conteúdo da mensagem.
+   * @param content - Conteúdo do áudio.
+   */
   private appendAudioContent(messageContent: HTMLElement, content: { type: 'audio', url: string }) {
     const audio = document.createElement('audio');
     audio.classList.add('max-message-content');
@@ -426,7 +514,11 @@ class Durenchat {
     messageContent.appendChild(audio);
   }
 
-  // Método para adicionar conteúdo de vídeo
+  /**
+   * Método para adicionar conteúdo de vídeo.
+   * @param messageContent - Elemento HTML do conteúdo da mensagem.
+   * @param content - Conteúdo do vídeo.
+   */
   private appendVideoContent(messageContent: HTMLElement, content: { type: 'video', url: string, caption?: string }) {
     const video = document.createElement('video');
     video.classList.add('max-message-content');
@@ -444,7 +536,10 @@ class Durenchat {
     }
   }
 
-  // Header
+  /**
+   * Define o cabeçalho do chat.
+   * @param data - Dados do cabeçalho.
+   */
   public defineHeader(data: any) {
     const header = document.createElement('div');
     header.classList.add('header-chat');
@@ -464,6 +559,10 @@ class Durenchat {
     this.wrapperElement.appendChild(header);
   }
 
+  /**
+   * Define o contêiner do chat.
+   * @param containerId - ID do contêiner do chat.
+   */
   public defineChatcontainer(containerId: string) {
     const chatContainer = document.createElement('div');
     chatContainer.id = containerId;
@@ -475,7 +574,9 @@ class Durenchat {
     this.initializeDragAndDrop();
   }
 
-  // Método para inicializar arrastar e soltar
+  /**
+   * Inicializa a funcionalidade de arrastar e soltar.
+   */
   private initializeDragAndDrop() {
     if (!this.chatElement) {
       throw new Error('O elemento chatElement não foi encontrado.');
@@ -504,7 +605,10 @@ class Durenchat {
     });
   }
 
-  // Método para lidar com o drop de arquivos
+  /**
+   * Lida com o drop de arquivos.
+   * @param file - Arquivo que foi solto.
+   */
   private handleFileDrop(file: File) {
     const reader = new FileReader();
     reader.onload = () => {
@@ -520,7 +624,12 @@ class Durenchat {
     reader.readAsDataURL(file);
   }
 
-  // Método para criar o conteúdo da mensagem com base no tipo de arquivo
+  /**
+   * Cria o conteúdo da mensagem com base no tipo de arquivo.
+   * @param file - Arquivo.
+   * @param result - Resultado da leitura do arquivo.
+   * @returns Conteúdo da mensagem.
+   */
   private createMessageContent(file: File, result: string): MessageContent | null {
     const contentHandlers: { [key: string]: (file: File, result: string) => MessageContent } = {
       'image/': (file, result) => ({ type: 'image', url: result }),
@@ -538,6 +647,9 @@ class Durenchat {
     return null;
   }
 
+  /**
+   * Define o rodapé do chat.
+   */
   public defineFooter() {
     this.footerElement = document.createElement('div');
     this.footerElement.classList.add('footer-chat');
@@ -587,7 +699,12 @@ class Durenchat {
     this.wrapperElement.appendChild(this.footerElement);
   }
 
-  // Método para criar ícones do rodapé
+  /**
+   * Cria ícones do rodapé.
+   * @param iconPath - Caminho do ícone.
+   * @param altText - Texto alternativo do ícone.
+   * @returns Elemento HTML do ícone.
+   */
   private createFooterIcon(iconPath: string, altText: string): HTMLElement {
     const iconSpan = document.createElement('span');
     const iconImg = document.createElement('img');
@@ -598,6 +715,11 @@ class Durenchat {
     return iconSpan;
   }
 
+  /**
+   * Lida com o evento de pressionar tecla no input de texto.
+   * @param event - Evento de teclado.
+   * @param inputText - Elemento input de texto.
+   */
   private handleInputKeydown(event: KeyboardEvent, inputText: HTMLInputElement) {
     if (event.key === 'Enter') {
       const messageContent = inputText.value.trim();
@@ -624,6 +746,10 @@ class Durenchat {
     }
   }
 
+  /**
+   * Lida com a seleção de arquivos.
+   * @param event - Evento de seleção de arquivo.
+   */
   private handleFileSelected(event: Event) {
     const file = (event.target as HTMLInputElement).files?.[0];
     if (file) {
@@ -632,6 +758,11 @@ class Durenchat {
     }
   }
 
+  /**
+   * Lida com o clique no ícone de emoji.
+   * @param emojiPicker - Elemento do seletor de emoji.
+   * @param emojiIcon - Ícone de emoji.
+   */
   private handleEmojiClick(emojiPicker: HTMLElement, emojiIcon: HTMLElement) {
     const rect = emojiIcon.getBoundingClientRect();
     emojiPicker.style.top = `${rect.top - 420}px`;
@@ -639,6 +770,12 @@ class Durenchat {
     emojiPicker.style.display = 'block';
   }
 
+  /**
+   * Lida com o clique no seletor de emoji.
+   * @param event - Evento de clique no seletor de emoji.
+   * @param inputText - Elemento input de texto.
+   * @param emojiPicker - Elemento do seletor de emoji.
+   */
   private handleEmojiPickerClick(
     event: CustomEvent<{ unicode: string }>,
     inputText: HTMLInputElement,
@@ -649,12 +786,21 @@ class Durenchat {
     inputText.focus();
   }
 
+  /**
+   * Lida com cliques fora do seletor de emoji.
+   * @param event - Evento de clique.
+   * @param emojiPicker - Elemento do seletor de emoji.
+   * @param emojiIcon - Ícone de emoji.
+   */
   private handleOutsideEmojiClick(event: MouseEvent, emojiPicker: HTMLElement, emojiIcon: HTMLElement) {
     if (!emojiPicker.contains(event.target as Node) && !emojiIcon.contains(event.target as Node)) {
       emojiPicker.style.display = 'none';
     }
   }
 
+  /**
+   * Lida com o clique no ícone de áudio.
+   */
   private handleAudioIconClick() {
     if (!this.isRecording) {
       this.recorder.start().then(() => {
@@ -668,6 +814,9 @@ class Durenchat {
     }
   }
 
+  /**
+   * Alterna a visibilidade do rodapé.
+   */
   private toggleFooterVisibility() {
     if (this.footerElement) {
       if (this.isRecording) {
@@ -691,6 +840,9 @@ class Durenchat {
     }
   }
 
+  /**
+   * Cria o rodapé de áudio.
+   */
   private createAudioFooter() {
     const audioFooter = document.createElement('div');
     audioFooter.classList.add('footer-chat');
@@ -709,6 +861,9 @@ class Durenchat {
     this.wrapperElement.appendChild(audioFooter);
   }
 
+  /**
+   * Lida com o clique para parar a gravação.
+   */
   private handleStopRecordingClick() {
     this.recorder.stop().getMp3().then(([buffer, blob]: [ArrayBuffer[], Blob]) => {
       const file = new File(buffer, 'recording.mp3', {
@@ -733,6 +888,9 @@ class Durenchat {
     });
   }
 
+  /**
+   * Lida com o clique para cancelar a gravação.
+   */
   private handleCancelRecordingClick() {
     this.recorder.stop();
     this.isRecording = false;
