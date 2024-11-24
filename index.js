@@ -100,10 +100,17 @@ loadIcons().then(icons => {
       {
         id: 2,
         name: 'Matheus',
-        color: '#303545',
+        color: '#4c405c',
         textColor: '#fff',
         photoUrl: 'https://s2-techtudo.glbimg.com/L9wb1xt7tjjL-Ocvos-Ju0tVmfc=/0x0:1200x800/984x0/smart/filters:strip_icc()/i.s3.glbimg.com/v1/AUTH_08fbf48bc0524877943fe86e43087e7a/internal_photos/bs/2023/q/l/TIdfl2SA6J16XZAy56Mw/canvaai.png',
       },
+            {
+        id: 1,
+        name: 'Fernanda',
+        color: '#711ec9',
+        textColor: '#fff',
+        photoUrl: 'https://s2-techtudo.glbimg.com/L9wb1xt7tjjL-Ocvos-Ju0tVmfc=/0x0:1200x800/984x0/smart/filters:strip_icc()/i.s3.glbimg.com/v1/AUTH_08fbf48bc0524877943fe86e43087e7a/internal_photos/bs/2023/q/l/TIdfl2SA6J16XZAy56Mw/canvaai.png',
+      }
     ],
     self: 2,
     icons: {
@@ -126,7 +133,7 @@ loadIcons().then(icons => {
 
   chat2.defineChatcontainer('dc-messages');
 
-  chat2.defineFooter('<div>HTML Personalizado para ser aplicado</div>');
+  chat2.defineFooter();
 
   chat2.render('chat-2');
   chat2.sendMessage({
