@@ -1,5 +1,9 @@
 {
+  "name": "durenchat",
+  "version": "1.0.0",
+  "main": "dist/bundle.js",
   "devDependencies": {
+    "file-loader": "^6.2.0",
     "ts-loader": "^9.5.1",
     "typescript": "^5.7.2",
     "webpack": "^5.96.1",

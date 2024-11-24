@@ -7,39 +7,60 @@ export type MessageContent =
   | { type: 'audio', url: string }
   | { type: 'video', url: string, caption?: string };
 
-export interface Chat {
+export type Chat = {
   self: number;
   users: UserConstructor[];
   messages: MessageConstructor[];
+  icons: ChatIcons;
 }
 
-export interface MessageConstructor {
+export type MessageConstructor = {
   sender: User;
   content: MessageContent;
   sent_at?: Date;
   edited_at?: Date;
   status?: 'sent' | 'delivered' | 'read';
 }
-export interface MessageConfig {
+export type MessageConfig = {
   sender: number | string;
   content: MessageContent;
   sent_at?: Date;
   edited_at?: Date;
 }
 
-export interface UserConstructor {
+export type UserConstructor = {
   id: string | number;
   name: string;
   color: string;
-  text_color: string;
+  textColor: string;
   photoUrl: string;
 }
 
-export interface PopupConfig {
+export type PopupConfig = {
   container: string;
-  position: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
   color: string;
   icon: string;
   close_icon: string;
   id: string;
+  icons: { popupOpen: string, popupClose: string };
+}
+
+export type ChatHeader = {
+  photoUrl: string;
+  name: string;
+}
+
+export type ChatEvents = { [key: string]: ChatEventListener[] }
+export type ChatEventListener = (data: any) => void;
+
+export type ChatIcons = {
+  sent: string,
+  delivered: string,
+  read: string,
+  options: string,
+  cancelEdit: string,
+  emoji: string,
+  file: string,
+  microphone: string,
+  send: string,
 }

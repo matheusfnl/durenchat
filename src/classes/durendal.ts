@@ -2,11 +2,9 @@ import 'emoji-picker-element';
 
 const MicRecorder = require('mic-recorder-to-mp3');
 
-import { Chat, MessageConfig, UserConstructor, MessageContent } from "../utills/types";
+import { Chat, MessageConfig, UserConstructor, MessageContent, ChatEvents, ChatEventListener, ChatHeader, ChatIcons } from "../utills/types";
 import { Message } from './message';
 import { User } from './user';
-
-type EventListener = (data: any) => void;
 
 class Durenchat {
   private wrapperElement: HTMLElement;
@@ -17,11 +15,12 @@ class Durenchat {
   private self: User;
   private users: User[] = [];
   private messages: Message[] = [];
-  private events: { [key: string]: EventListener[] } = {};
-  private recorder: any;
+  private events: ChatEvents = {};
+  private recorder: typeof MicRecorder;
   private isRecording: boolean = false;
   private contextMenuMessage: Message | null = null;
   private editingMessage: Message | null = null;
+  private icons: ChatIcons;
 
   /**
    * Construtor da classe Durenchat.
@@ -31,6 +30,7 @@ class Durenchat {
     this.users = this.initializeUsers(chat.users);
     this.self = this.getUser(chat.self);
     this.recorder = new MicRecorder({ bitRate: 128 });
+    this.icons = chat.icons;
 
     const container = document.createElement('div');
     container.style.height = '100%';
@@ -71,7 +71,7 @@ class Durenchat {
    * @param event - Nome do evento.
    * @param listener - Função ouvinte do evento.
    */
-  public on(event: string, listener: EventListener) {
+  public on(event: string, listener: ChatEventListener) {
     if (!this.events[event]) {
       this.events[event] = [];
     }
@@ -83,7 +83,7 @@ class Durenchat {
    * @param event - Nome do evento.
    * @param listener - Função ouvinte do evento.
    */
-  public off(event: string, listener: EventListener) {
+  public off(event: string, listener: ChatEventListener) {
     if (!this.events[event]) return;
     this.events[event] = this.events[event].filter(e => e !== listener);
   }
@@ -104,7 +104,7 @@ class Durenchat {
    * @returns Instância do usuário.
    */
   public getUser(id: string | number): User {
-    const user = this.users.find(user => user.id === id);
+    const user = this.users.find(user => user.getId() === id);
     if (!user) {
       throw new Error(`User not found`);
     }
@@ -139,7 +139,7 @@ class Durenchat {
    * @returns Instância da mensagem.
    */
   public getMessage(id: string | number): Message {
-    const message = this.messages.find(message => +message.id === +id);
+    const message = this.messages.find(message => +message.getId() === +id);
     if (!message) {
       throw new Error(`Message not found`);
     }
@@ -158,7 +158,7 @@ class Durenchat {
       sender: user,
     });
 
-    const index = this.messages.findIndex(m => new Date(m.sent_at) > new Date(new_message.sent_at));
+    const index = this.messages.findIndex(m => new Date(m.getSentDate()) > new Date(new_message.getSentDate()));
     if (index === -1) {
       this.messages.push(new_message);
     } else {
@@ -191,7 +191,7 @@ class Durenchat {
         this.chatElement.insertBefore(messageWrapper, this.chatElement.children[index]);
       }
 
-      if (message.sender.id === this.self.id) {
+      if (message.getSender().getId() === this.self.getId()) {
         this.chatElement.scrollTop = this.chatElement.scrollHeight;
       }
     } else {
@@ -209,7 +209,7 @@ class Durenchat {
   private createMessageWrapper(message: Message): HTMLElement {
     const messageWrapper = document.createElement('div');
     messageWrapper.classList.add('message-container');
-    messageWrapper.classList.add(message.sender.id === this.self?.id ? 'message-container-sender' : 'message-container-receiver');
+    messageWrapper.classList.add(message.getSender().getId() === this.self?.getId() ? 'message-container-sender' : 'message-container-receiver');
     return messageWrapper;
   }
 
@@ -221,17 +221,19 @@ class Durenchat {
   private createMessageBaloon(message: Message): HTMLElement {
     const messageBaloon = document.createElement('div');
     messageBaloon.classList.add('chat-message');
-    messageBaloon.style.backgroundColor = message.sender.color;
-    messageBaloon.style.color = message.sender.text_color;
+    messageBaloon.style.backgroundColor = message.getSender().getColor();
+    messageBaloon.style.color = message.getSender().getTextColor();
     messageBaloon.style.position = 'relative';
 
     const messageContent = document.createElement('div');
     messageContent.classList.add('chat-message-content');
 
-    if (typeof message.content === 'string') {
-      messageContent.textContent = message.content;
+    const content = message.getContent();
+
+    if (typeof content === 'string') {
+      messageContent.textContent = content;
     } else {
-      this.appendContentToMessage(messageContent, message.content);
+      this.appendContentToMessage(messageContent, content);
     }
 
     const messageInfo = document.createElement('div');
@@ -239,39 +241,37 @@ class Durenchat {
 
     const messageDate = document.createElement('div');
     messageDate.classList.add('chat-message-date');
-    messageDate.textContent = message.sent_at.toLocaleString('pt-BR');
+    messageDate.textContent = message.getSentDate().toLocaleTimeString('pt-BR', {
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+
     messageDate.style.opacity = '0.7';
 
-    const statusIcon = document.createElement('img');
-    statusIcon.classList.add('chat-message-status');
-    statusIcon.src = '';
-    statusIcon.alt = message.getStatus();
-
     messageInfo.appendChild(messageDate);
-    messageInfo.appendChild(statusIcon);
-
     messageBaloon.appendChild(messageContent);
     messageBaloon.appendChild(messageInfo);
 
-    if (message.sender.id === this.self.id) {
+    if (message.getSender().getId() === this.self.getId()) {
+      const statusSvg = this.getStatusIcon(message);
+      const statusIcon = this.createIcon(statusSvg, 'chat-message-status');
+
+      messageInfo.appendChild(statusIcon);
+
       const optionsContainer = document.createElement('span');
       optionsContainer.style.position = 'absolute';
       optionsContainer.style.top = '6px';
       optionsContainer.style.right = '6px';
-      optionsContainer.style.backgroundColor = message.sender.color;
+      optionsContainer.style.backgroundColor = message.getSender().getColor();
       optionsContainer.style.display = 'none';
       optionsContainer.style.cursor = 'pointer';
-      optionsContainer.style.padding = '4px';
-      optionsContainer.style.borderRadius = '50%';
-      optionsContainer.style.boxShadow = `0 0 5px 5px ${message.sender.color}80`;
+      optionsContainer.style.borderRadius = '4px';
+      optionsContainer.style.boxShadow = `0 0 5px 5px ${message.getSender().getColor()}80`;
 
-      const optionsImg = document.createElement('img');
-      optionsImg.classList.add('options-icon');
-      optionsImg.src = '';
-      optionsImg.alt = 'options';
+      const optionsImg = this.createIcon(this.icons.options, 'options-icon');
 
       optionsContainer.appendChild(optionsImg);
-      optionsContainer.dataset.messageId = message.id.toString();
+      optionsContainer.dataset.messageId = message.getId().toString();
 
       messageBaloon.appendChild(optionsContainer);
 
@@ -313,7 +313,9 @@ class Durenchat {
       this.contextMenuMessage = message;
 
       const editButton = this.optionsElement.getElementsByClassName('edit-button')[0] as HTMLElement;
-      if (typeof message.content === 'object' && message.content.type === 'audio') {
+      const content = message.getContent();
+
+      if (typeof content === 'object' && content.type === 'audio') {
         editButton.style.display = 'none';
       } else {
         editButton.style.display = 'block';
@@ -372,16 +374,18 @@ class Durenchat {
    */
   private editMessage() {
     if (this.contextMenuMessage) {
-      const message = this.getMessage(this.contextMenuMessage.id);
+      const message = this.getMessage(this.contextMenuMessage.getId());
       const inputText = this.footerElement?.querySelector('.input-text') as HTMLInputElement;
 
       this.editingMessage = message;
 
       if (inputText) {
-        if (typeof message.content === 'string') {
-          inputText.value = message.content;
-        } else if (message.content.type !== 'audio' && message.content.caption) {
-          inputText.value = message.content.caption;
+        const content = message.getContent();
+
+        if (typeof content === 'string') {
+          inputText.value = content;
+        } else if (content.type !== 'audio' && content.caption) {
+          inputText.value = content.caption;
         }
 
         let cancelSpan = this.footerElement?.querySelector('.cancel-span') as HTMLElement;
@@ -390,9 +394,7 @@ class Durenchat {
           cancelSpan.classList.add('cancel-span');
           cancelSpan.style.cursor = 'pointer';
 
-          const cancelImg = document.createElement('img');
-          cancelImg.alt = 'Cancelar';
-          cancelImg.src = '';
+          const cancelImg = this.createIcon(this.icons.cancelEdit, 'footer-container');
           cancelSpan.appendChild(cancelImg);
 
           cancelSpan.addEventListener('click', () => {
@@ -407,7 +409,7 @@ class Durenchat {
         }
       }
 
-      this.emit('edit-message', this.contextMenuMessage.id);
+      this.emit('edit-message', this.contextMenuMessage.getId());
     }
   }
 
@@ -416,7 +418,7 @@ class Durenchat {
    */
   private deleteMessage() {
     if (this.contextMenuMessage) {
-      const messageIndex = this.messages.findIndex(message => message.id.toString() === `${this.contextMenuMessage?.id}`);
+      const messageIndex = this.messages.findIndex(message => message.getId().toString() === `${this.contextMenuMessage?.getId()}`);
       if (messageIndex !== -1) {
         const [removedMessage] = this.messages.splice(messageIndex, 1);
 
@@ -425,7 +427,7 @@ class Durenchat {
           messageElement.parentNode.removeChild(messageElement);
         }
 
-        this.emit('delete-message', this.contextMenuMessage.id);
+        this.emit('delete-message', this.contextMenuMessage.getId());
       }
     }
   }
@@ -470,12 +472,7 @@ class Durenchat {
     img.src = content.url;
     img.alt = 'Imagem';
     messageContent.appendChild(img);
-    if (content.caption) {
-      const caption = document.createElement('div');
-      caption.classList.add('message-caption');
-      caption.textContent = content.caption;
-      messageContent.appendChild(caption);
-    }
+    this.appendCaption(content.caption, messageContent);
   }
 
   /**
@@ -490,12 +487,7 @@ class Durenchat {
     docLink.textContent = content.name;
     docLink.target = '_blank';
     messageContent.appendChild(docLink);
-    if (content.caption) {
-      const caption = document.createElement('div');
-      caption.classList.add('message-caption');
-      caption.textContent = content.caption;
-      messageContent.appendChild(caption);
-    }
+    this.appendCaption(content.caption, messageContent);
   }
 
   /**
@@ -528,19 +520,25 @@ class Durenchat {
     videoSource.type = 'video/mp4';
     video.appendChild(videoSource);
     messageContent.appendChild(video);
-    if (content.caption) {
-      const caption = document.createElement('div');
-      caption.classList.add('message-caption');
-      caption.textContent = content.caption;
-      messageContent.appendChild(caption);
+    this.appendCaption(content.caption, messageContent);
+  }
+
+  private appendCaption(contentCaption: string | undefined, messageContent: HTMLElement) {
+    const caption = document.createElement('div');
+    caption.classList.add('message-caption');
+
+    if (contentCaption) {
+      caption.textContent = contentCaption;
     }
+
+    messageContent.appendChild(caption);
   }
 
   /**
    * Define o cabeçalho do chat.
    * @param data - Dados do cabeçalho.
    */
-  public defineHeader(data: any) {
+  public defineHeader(data: ChatHeader) {
     const header = document.createElement('div');
     header.classList.add('header-chat');
 
@@ -615,7 +613,7 @@ class Durenchat {
       const content = this.createMessageContent(file, reader.result as string);
       if (content) {
         this.sendMessage({
-          sender: this.self.id,
+          sender: this.self.getId(),
           content: content,
           sent_at: new Date(),
         });
@@ -654,9 +652,9 @@ class Durenchat {
     this.footerElement = document.createElement('div');
     this.footerElement.classList.add('footer-chat');
 
-    const emojiIcon = this.createFooterIcon('../icons/emoji.svg', 'Emoji');
-    const documentIcon = this.createFooterIcon('../icons/picture.svg', 'Imagem');
-    const audioIcon = this.createFooterIcon('../icons/microphone.svg', 'Microfone');
+    const emojiIcon = this.createIcon(this.icons.emoji, 'footer-container');
+    const documentIcon = this.createIcon(this.icons.file, 'footer-container');
+    const audioIcon = this.createIcon(this.icons.microphone, 'footer-container');
 
     const inputText = document.createElement('input');
     inputText.classList.add('input-text');
@@ -705,14 +703,20 @@ class Durenchat {
    * @param altText - Texto alternativo do ícone.
    * @returns Elemento HTML do ícone.
    */
-  private createFooterIcon(iconPath: string, altText: string): HTMLElement {
-    const iconSpan = document.createElement('span');
-    const iconImg = document.createElement('img');
-    iconImg.classList.add('footer-icon');
-    iconImg.src = iconPath;
-    iconImg.alt = altText;
-    iconSpan.appendChild(iconImg);
-    return iconSpan;
+
+  private createIcon(iconPath: string, iconClass: string) {
+    const iconContainer = document.createElement('div');
+    iconContainer.innerHTML = iconPath;
+
+    if (iconClass) {
+      iconContainer.classList.add(iconClass);
+    }
+
+    return iconContainer;
+  }
+
+  private getStatusIcon(message: Message): string {
+    return this.icons[message.getStatus()];
   }
 
   /**
@@ -723,24 +727,22 @@ class Durenchat {
   private handleInputKeydown(event: KeyboardEvent, inputText: HTMLInputElement) {
     if (event.key === 'Enter') {
       const messageContent = inputText.value.trim();
-      if (messageContent) {
-        if (! this.editingMessage) {
-          this.sendMessage({
-            sender: this.self.id,
-            content: messageContent,
-            sent_at: new Date(),
-          });
-          inputText.value = '';
-        } else {
-          this.editingMessage.setMessageText(messageContent)
-          this.emit('message-updated', this.editingMessage);
-          this.editingMessage = null;
-          inputText.value = '';
+      if (! this.editingMessage) {
+        this.sendMessage({
+          sender: this.self.getId(),
+          content: messageContent,
+          sent_at: new Date(),
+        });
+        inputText.value = '';
+      } else {
+        this.editingMessage.setMessageText(messageContent)
+        this.emit('message-updated', this.editingMessage);
+        this.editingMessage = null;
+        inputText.value = '';
 
-          const cancelSpan = this.footerElement?.querySelector('.cancel-span') as HTMLElement;
-          if (cancelSpan) {
-              cancelSpan.style.display = 'none';
-          }
+        const cancelSpan = this.footerElement?.querySelector('.cancel-span') as HTMLElement;
+        if (cancelSpan) {
+            cancelSpan.style.display = 'none';
         }
       }
     }
@@ -765,7 +767,7 @@ class Durenchat {
    */
   private handleEmojiClick(emojiPicker: HTMLElement, emojiIcon: HTMLElement) {
     const rect = emojiIcon.getBoundingClientRect();
-    emojiPicker.style.top = `${rect.top - 420}px`;
+    emojiPicker.style.top = `${rect.top - 170}px`;
     emojiPicker.style.left = `${rect.left}px`;
     emojiPicker.style.display = 'block';
   }
@@ -849,8 +851,8 @@ class Durenchat {
     audioFooter.style.display = 'none';
     this.audioFooterElement = audioFooter;
 
-    const cancelIcon = this.createFooterIcon('../icons/cancel.svg', 'Cancelar');
-    const sendIcon = this.createFooterIcon('../icons/send.svg', 'Enviar');
+    const cancelIcon = this.createIcon(this.icons.cancelEdit, 'footer-container');
+    const sendIcon = this.createIcon(this.icons.send, 'footer-container');
 
     cancelIcon.addEventListener('click', () => this.handleCancelRecordingClick());
     sendIcon.addEventListener('click', () => this.handleStopRecordingClick());
@@ -874,7 +876,7 @@ class Durenchat {
       const audioUrl = URL.createObjectURL(file);
 
       this.sendMessage({
-        sender: this.self.id,
+        sender: this.self.getId(),
         content: { type: 'audio', url: audioUrl },
         sent_at: new Date(),
       });

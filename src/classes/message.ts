@@ -3,10 +3,10 @@ import { User } from './user';
 
 export class Message {
   private static lastId = 0;
-  id: string | number;
-  sender: User;
-  content: MessageContent;
-  sent_at: Date = new Date();
+  private id: string | number;
+  private sender: User;
+  private content: MessageContent;
+  private sent_at: Date = new Date();
   private edited_at?: Date | null = null;
   private status: 'sent' | 'delivered' | 'read';
   private element?: HTMLElement;
@@ -27,6 +27,26 @@ export class Message {
     if (edited_at) {
       this.edited_at = edited_at;
     }
+  }
+
+  // Função para obter o id
+  public getId(): string | number {
+    return this.id;
+  }
+
+  // Função para obter quem enviou a mensagem
+  public getSender(): User {
+    return this.sender;
+  }
+
+  // Função para obter o conteúdo
+  public getContent(): MessageContent {
+    return this.content;
+  }
+
+  // Função para obter o conteúdo
+  public getSentDate(): Date {
+    return this.sent_at;
   }
 
   // Função para obter o status
@@ -60,30 +80,30 @@ export class Message {
     }
   }
 
-    // Método para atualizar o texto da mensagem
-    public setMessageText(newContent: string): void {
+  // Método para atualizar o texto da mensagem
+  public setMessageText(newContent: string): void {
+    if (typeof this.content === 'string') {
+      this.content = newContent;
+    } else if (this.content.type !== 'audio') {
+      this.content.caption = newContent;
+    }
+
+    this.edited_at = new Date();
+    this.updateMessageContentInDOM();
+  }
+
+  // Função para atualizar o conteúdo da mensagem no DOM
+  private updateMessageContentInDOM(): void {
+    if (this.element) {
       if (typeof this.content === 'string') {
-        this.content = newContent;
+        const messageContentElement = this.element.querySelector('.chat-message-content') as HTMLElement;
+        messageContentElement.textContent = this.content;
       } else if (this.content.type !== 'audio') {
-        this.content.caption = newContent;
-      }
-
-      this.edited_at = new Date();
-      this.updateMessageContentInDOM();
-    }
-
-    // Função para atualizar o conteúdo da mensagem no DOM
-    private updateMessageContentInDOM(): void {
-      if (this.element) {
-        if (typeof this.content === 'string') {
-          const messageContentElement = this.element.querySelector('.chat-message-content') as HTMLElement;
-          messageContentElement.textContent = this.content;
-        } else if (this.content.type !== 'audio') {
-          const caption = this.element.querySelector('.message-caption') as HTMLElement;
-          caption.textContent = this.content.caption || '';
-        }
+        const caption = this.element.querySelector('.message-caption') as HTMLElement;
+        caption.textContent = this.content.caption || '';
       }
     }
+  }
 
   // Método estático para gerar um ID único
   private static generateId(): number {

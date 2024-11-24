@@ -4,17 +4,20 @@ import { PopupConfig } from "../utills/types";
 class Popup {
   private container: HTMLElement;
   private popupElement: HTMLElement;
-  private iconElement: HTMLImageElement;
+  private iconElement: HTMLElement ;
   private chat: Durenchat | null = null;
   private isOpen: boolean = false;
   private chatContainer: HTMLElement | null = null;
+  private icons: { popupOpen: string, popupClose: string };
 
   constructor(private config: PopupConfig) {
     this.container = document.querySelector(config.container) as HTMLElement;
     if (!this.container) {
       throw new Error(`Container ${config.container} not found`);
     }
-    this.iconElement = this.createIcon('../icons/chat.svg', 'Chat Icon');
+
+    this.icons = config.icons;
+    this.iconElement = this.createIcon();
     this.popupElement = this.createPopupElement();
     this.container.appendChild(this.popupElement);
   }
@@ -41,16 +44,12 @@ class Popup {
     return popupElement;
   }
 
-  private createIcon(iconPath: string, altText: string): HTMLImageElement {
-    const iconImg = document.createElement('img');
+  private createIcon(): HTMLElement  {
+    const iconContainer = document.createElement('div');
+    iconContainer.classList.add('popup-icon-container');
+    iconContainer.innerHTML = this.icons.popupOpen;
 
-    iconImg.classList.add('popup-icon');
-    iconImg.src = '';
-    iconImg.alt = altText;
-    iconImg.style.width = '40px';
-    iconImg.style.height = '40px';
-
-    return iconImg;
+    return iconContainer;
   }
 
   private toggleChat() {
@@ -64,8 +63,7 @@ class Popup {
   private openChat() {
     if (!this.chat) return;
 
-    this.iconElement.src = '';
-
+    this.iconElement.innerHTML = this.icons.popupClose;
     this.chatContainer = document.createElement('div');
     this.chatContainer.id = 'popup-chat-container';
     this.chatContainer.style.position = 'absolute';
@@ -88,7 +86,7 @@ class Popup {
 
   private closeChat() {
     if (this.chatContainer) {
-      this.iconElement.src = '';
+      this.iconElement.innerHTML = this.icons.popupOpen;
 
       this.container.removeChild(this.chatContainer);
       this.chatContainer = null;
@@ -97,7 +95,7 @@ class Popup {
     this.isOpen = false;
   }
 
-  public defineChat(chat: Durenchat) {
+  public defineChat(chat: Durenchat): void {
     this.chat = chat;
   }
 }
