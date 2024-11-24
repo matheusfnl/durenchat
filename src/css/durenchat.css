@@ -13,7 +13,7 @@ emoji-picker {
   padding: 10px;
   background-color: #e8e8e8;
   border-radius: 8px 8px 0 0;
-  border-bottom: 1px solid #a6a6a6;
+  border-bottom: 1px solid #ddd;
 }
 
 .img-header-chat {
@@ -36,7 +36,7 @@ emoji-picker {
   align-items: center;;
   gap: 20px;
   padding: 20px;
-  border-top: 1px solid #a6a6a6;
+  border-top: 1px solid #ddd;
   background-color: #e8e8e8;
   border-radius: 0 0 8px 8px;
   height: 42px;
@@ -86,8 +86,9 @@ emoji-picker {
 }
 
 .max-message-content {
-  max-width: 100%;
+  max-width: 300px;
   border-radius: 8px;
+  width: 100%;
 }
 
 .options-element {
