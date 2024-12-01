@@ -713,7 +713,7 @@ class Durenchat {
       fileInput.addEventListener('change', (event) => this.handleFileSelected(event));
 
       const emojiPicker = document.createElement('emoji-picker');
-      this.addClass(emojiPicker, 'light');
+      emojiPicker.classList.add('light');
       emojiPicker.style.position = 'absolute';
       emojiPicker.style.display = 'none';
       emojiPicker.style.backgroundColor = 'white';
@@ -810,7 +810,7 @@ class Durenchat {
    */
   private handleEmojiClick(emojiPicker: HTMLElement, emojiIcon: HTMLElement) {
     const rect = emojiIcon.getBoundingClientRect();
-    emojiPicker.style.top = `${rect.top - 170}px`;
+    emojiPicker.style.top = `${rect.top - 408}px`;
     emojiPicker.style.left = `${rect.left}px`;
     emojiPicker.style.display = 'block';
   }
