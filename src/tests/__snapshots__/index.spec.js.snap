@@ -343,7 +343,7 @@ Durenchat {
   "messages": [
     Message {
       "content": "Olá",
-      "edited_at": null,
+      "editedAt": null,
       "element": <div
         class="message-container message-container-sender"
       >
@@ -387,7 +387,7 @@ Durenchat {
         "photoUrl": "",
         "textColor": "#fff",
       },
-      "sent_at": 2024-12-12T00:00:00.000Z,
+      "sendAt": 2024-12-12T00:00:00.000Z,
       "status": "sent",
     },
     Message {
@@ -396,7 +396,7 @@ Durenchat {
         "type": "image",
         "url": "https://example.com/image.jpg",
       },
-      "edited_at": null,
+      "editedAt": null,
       "element": <div
         class="message-container message-container-sender"
       >
@@ -449,7 +449,7 @@ Durenchat {
         "photoUrl": "",
         "textColor": "#fff",
       },
-      "sent_at": 2024-12-12T00:00:00.000Z,
+      "sendAt": 2024-12-12T00:00:00.000Z,
       "status": "sent",
     },
     Message {
@@ -457,7 +457,7 @@ Durenchat {
         "type": "audio",
         "url": "https://example.com/audio.mp3",
       },
-      "edited_at": null,
+      "editedAt": null,
       "element": <div
         class="message-container message-container-sender"
       >
@@ -509,7 +509,7 @@ Durenchat {
         "photoUrl": "",
         "textColor": "#fff",
       },
-      "sent_at": 2024-12-12T00:00:00.000Z,
+      "sendAt": 2024-12-12T00:00:00.000Z,
       "status": "sent",
     },
     Message {
@@ -517,7 +517,7 @@ Durenchat {
         "type": "video",
         "url": "https://example.com/video.mp4",
       },
-      "edited_at": null,
+      "editedAt": null,
       "element": <div
         class="message-container message-container-sender"
       >
@@ -572,7 +572,7 @@ Durenchat {
         "photoUrl": "",
         "textColor": "#fff",
       },
-      "sent_at": 2024-12-12T00:00:00.000Z,
+      "sendAt": 2024-12-12T00:00:00.000Z,
       "status": "sent",
     },
     Message {
@@ -580,7 +580,7 @@ Durenchat {
         "type": "document",
         "url": "https://example.com/document.pdf",
       },
-      "edited_at": null,
+      "editedAt": null,
       "element": <div
         class="message-container message-container-sender"
       >
@@ -631,7 +631,7 @@ Durenchat {
         "photoUrl": "",
         "textColor": "#fff",
       },
-      "sent_at": 2024-12-12T00:00:00.000Z,
+      "sendAt": 2024-12-12T00:00:00.000Z,
       "status": "sent",
     },
   ],

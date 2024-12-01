@@ -7,6 +7,14 @@ export class User {
   private photoUrl: string;
   private textColor: string = '#000000';
 
+  /**
+   * Construtor da classe User.
+   * @param id - O ID do usuário.
+   * @param name - O nome do usuário.
+   * @param color - A cor associada ao usuário.
+   * @param textColor - A cor do texto do usuário.
+   * @param photoUrl - A URL da foto do usuário.
+   */
   constructor({
     id,
     name,
@@ -24,18 +32,34 @@ export class User {
     }
   }
 
+  /**
+   * Função para obter o ID do usuário.
+   * @returns O ID do usuário.
+   */
   public getId(): string | number {
     return this.id;
   }
 
+  /**
+   * Função para obter a cor associada ao usuário.
+   * @returns A cor do usuário.
+   */
   public getColor(): string {
     return this.color;
   }
 
+  /**
+   * Função para obter a cor do texto do usuário.
+   * @returns A cor do texto do usuário.
+   */
   public getTextColor(): string {
     return this.textColor;
   }
 
+  /**
+   * Função para atualizar os dados do usuário.
+   * @param user - Objeto contendo os novos dados do usuário.
+   */
   public updateUser(user: UserConstructor): void {
     for (const field of Object.keys(user) as Array<keyof UserConstructor>) {
       if (field === 'id' || !(field in this)) continue;

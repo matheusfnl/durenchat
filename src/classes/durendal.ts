@@ -126,10 +126,10 @@ class Durenchat {
    * @returns Instância do novo usuário.
    */
   public addUser(user: UserConstructor): User {
-    const new_user = new User(user);
-    this.users.push(new_user);
-    this.emit('user-added', new_user);
-    return new_user;
+    const newUser = new User(user);
+    this.users.push(newUser);
+    this.emit('user-added', newUser);
+    return newUser;
   }
 
   /**
@@ -138,10 +138,10 @@ class Durenchat {
    * @returns Instância do usuário atualizado.
    */
   public updateUser(user: UserConstructor): User {
-    const selected_user = this.getUser(user.id);
-    selected_user.updateUser(user);
-    this.emit('user-updated', selected_user);
-    return selected_user;
+    const selectedUser = this.getUser(user.id);
+    selectedUser.updateUser(user);
+    this.emit('user-updated', selectedUser);
+    return selectedUser;
   }
 
   /**
@@ -164,23 +164,23 @@ class Durenchat {
    */
   public sendMessage(message: MessageConfig): Message {
     const user = this.getUser(message.sender);
-    const new_message = new Message({
+    const newMessage = new Message({
       ...message,
       sender: user,
     });
 
-    const index = this.messages.findIndex(m => new Date(m.getSentDate()) > new Date(new_message.getSentDate()));
+    const index = this.messages.findIndex(m => new Date(m.getSentDate()) > new Date(newMessage.getSentDate()));
     if (index === -1) {
-      this.messages.push(new_message);
+      this.messages.push(newMessage);
     } else {
-      this.messages.splice(index, 0, new_message);
+      this.messages.splice(index, 0, newMessage);
     }
 
-    const messageElement = this.appendMessageToChat(new_message, index);
-    new_message.setElement(messageElement);
-    this.emit('message-sent', new_message);
+    const messageElement = this.appendMessageToChat(newMessage, index);
+    newMessage.setElement(messageElement);
+    this.emit('message-sent', newMessage);
 
-    return new_message;
+    return newMessage;
   }
 
   /**
@@ -534,6 +534,11 @@ class Durenchat {
     this.appendCaption(content.caption, messageContent);
   }
 
+  /**
+   * Método para adicionar uma legenda ao conteúdo da mensagem.
+   * @param contentCaption - Legenda do conteúdo.
+   * @param messageContent - Elemento HTML do conteúdo da mensagem.
+   */
   private appendCaption(contentCaption: string | undefined, messageContent: HTMLElement) {
     const caption = document.createElement('div');
     this.addClass(caption, 'message-caption');
@@ -649,7 +654,7 @@ class Durenchat {
         this.sendMessage({
           sender: this.self.getId(),
           content: content,
-          sent_at: new Date(),
+          sendAt: new Date(),
         });
       }
     };
@@ -769,7 +774,7 @@ class Durenchat {
         this.sendMessage({
           sender: this.self.getId(),
           content: messageContent,
-          sent_at: new Date(),
+          sendAt: new Date(),
         });
         inputText.value = '';
       } else {
@@ -916,7 +921,7 @@ class Durenchat {
       this.sendMessage({
         sender: this.self.getId(),
         content: { type: 'audio', url: audioUrl },
-        sent_at: new Date(),
+        sendAt: new Date(),
       });
 
       this.isRecording = false;
@@ -938,12 +943,22 @@ class Durenchat {
     this.emit('audio-cancel');
   }
 
+  /**
+   * Adiciona uma classe a um elemento HTML.
+   * @param element - Elemento HTML.
+   * @param className - Nome da classe.
+   */
   private addClass(element: HTMLElement, className: string) {
   const prefix = this.prefix ? `${this.prefix}-` : '';
 
     element.classList.add(`${prefix}${className}`);
   }
 
+  /**
+   * Remove uma classe de um elemento HTML.
+   * @param element - Elemento HTML.
+   * @param className - Nome da classe.
+   */
   private removeClass(element: HTMLElement, className: string)  {
     const prefix = this.prefix ? `${this.prefix}-` : '';
 

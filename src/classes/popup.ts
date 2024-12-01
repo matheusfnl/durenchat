@@ -4,12 +4,16 @@ import { PopupConfig } from "../utills/types";
 class Popup {
   private container: HTMLElement;
   private popupElement: HTMLElement;
-  private iconElement: HTMLElement ;
+  private iconElement: HTMLElement;
   private chat: Durenchat | null = null;
   private isOpen: boolean = false;
   private chatContainer: HTMLElement | null = null;
   private icons: { popupOpen: string, popupClose: string };
 
+  /**
+   * Construtor da classe Popup.
+   * @param config - Configuração do popup.
+   */
   constructor(private config: PopupConfig) {
     this.container = document.querySelector(config.container) as HTMLElement;
     if (!this.container) {
@@ -22,6 +26,10 @@ class Popup {
     this.container.appendChild(this.popupElement);
   }
 
+  /**
+   * Cria o elemento do popup.
+   * @returns O elemento HTML do popup.
+   */
   private createPopupElement(): HTMLElement {
     const popupElement = document.createElement('div');
     popupElement.id = this.config.id;
@@ -44,7 +52,11 @@ class Popup {
     return popupElement;
   }
 
-  private createIcon(): HTMLElement  {
+  /**
+   * Cria o ícone do popup.
+   * @returns O elemento HTML do ícone.
+   */
+  private createIcon(): HTMLElement {
     const iconContainer = document.createElement('div');
     iconContainer.classList.add('popup-icon-container');
     iconContainer.innerHTML = this.icons.popupOpen;
@@ -52,6 +64,9 @@ class Popup {
     return iconContainer;
   }
 
+  /**
+   * Alterna a visibilidade do chat.
+   */
   private toggleChat() {
     if (this.isOpen) {
       this.closeChat();
@@ -60,6 +75,9 @@ class Popup {
     }
   }
 
+  /**
+   * Abre o chat no popup.
+   */
   private openChat() {
     if (!this.chat) return;
 
@@ -84,6 +102,9 @@ class Popup {
     this.isOpen = true;
   }
 
+  /**
+   * Fecha o chat no popup.
+   */
   private closeChat() {
     if (this.chatContainer) {
       this.iconElement.innerHTML = this.icons.popupOpen;
@@ -95,6 +116,10 @@ class Popup {
     this.isOpen = false;
   }
 
+  /**
+   * Define o chat a ser exibido no popup.
+   * @param chat - Instância do Durenchat.
+   */
   public defineChat(chat: Durenchat): void {
     this.chat = chat;
   }

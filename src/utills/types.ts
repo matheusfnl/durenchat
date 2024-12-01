@@ -18,15 +18,15 @@ export type Chat = {
 export type MessageConstructor = {
   sender: User;
   content: MessageContent;
-  sent_at?: Date;
-  edited_at?: Date;
+  sendAt?: Date;
+  editedAt?: Date;
   status?: 'sent' | 'delivered' | 'read';
 }
 export type MessageConfig = {
   sender: number | string;
   content: MessageContent;
-  sent_at?: Date;
-  edited_at?: Date;
+  sendAt?: Date;
+  editedAt?: Date;
 }
 
 export type UserConstructor = {
@@ -41,7 +41,6 @@ export type PopupConfig = {
   container: string;
   color: string;
   icon: string;
-  close_icon: string;
   id: string;
   icons: { popupOpen: string, popupClose: string };
 }
