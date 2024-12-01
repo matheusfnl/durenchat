@@ -333,12 +333,25 @@ class Durenchat {
       }
 
       const rect = optionsContainer.getBoundingClientRect();
-      const chatRect = this.chatElement.getBoundingClientRect();
-      const topPosition = rect.top - chatRect.top + optionsContainer.offsetHeight;
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+      let topPosition = rect.top + scrollTop;
       const rightPosition = window.innerWidth - rect.right;
 
+      let parentElement = optionsContainer.parentElement;
+      while (parentElement) {
+        if (parentElement.id === 'popup-chat-container') {
+          const parentRect = parentElement.getBoundingClientRect();
+          topPosition = rect.top - parentRect.top;
+
+          break;
+        }
+
+        parentElement = parentElement.parentElement;
+      }
+
       this.optionsElement.style.top = `${topPosition}px`;
-      this.optionsElement.style.right = `${rightPosition + 10}px`;
+      this.optionsElement.style.right = `${rightPosition + 30}px`;
       this.optionsElement.style.display = 'flex';
     }
   }
