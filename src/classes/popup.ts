@@ -1,5 +1,5 @@
 import Durenchat from "./durendal";
-import { PopupConfig } from "../utills/types";
+import { PopupConfig, PopupConfigIcons } from "../utills/types";
 
 class Popup {
   private container: HTMLElement;
@@ -8,7 +8,7 @@ class Popup {
   private chat: Durenchat | null = null;
   private isOpen: boolean = false;
   private chatContainer: HTMLElement | null = null;
-  private icons: { popupOpen: string, popupClose: string };
+  private icons: PopupConfigIcons;
 
   /**
    * Construtor da classe Popup.

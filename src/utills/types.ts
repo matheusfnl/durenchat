@@ -42,7 +42,12 @@ export type PopupConfig = {
   color: string;
   icon: string;
   id: string;
-  icons: { popupOpen: string, popupClose: string };
+  icons: PopupConfigIcons;
+}
+
+export type PopupConfigIcons = {
+  popupOpen: string;
+  popupClose: string;
 }
 
 export type ChatHeader = {
