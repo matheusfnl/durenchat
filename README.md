@@ -92,7 +92,6 @@ popupChat.defineChat(chat);
 
 | Método                               | Descrição                                |
 |--------------------------------------|------------------------------------------|
-| `constructor(chat: Chat)`            | Inicializa uma nova instância do Durenchat. |
 | `render(containerId: string)`        | Renderiza o chat em um elemento específico. |
 | `initializeUsers(users: UserConstructor[]): User[]` | Inicializa os usuários do chat. |
 | `on(event: string, listener: ChatEventListener)` | Adiciona ouvintes de eventos. |
