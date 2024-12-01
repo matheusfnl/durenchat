@@ -323,7 +323,7 @@ class Durenchat {
       const message = this.getMessage(optionsContainer.dataset.messageId as string);
       this.contextMenuMessage = message;
 
-      const editButton = this.optionsElement.getElementsByClassName('edit-button')[0] as HTMLElement;
+      const editButton = this.optionsElement.getElementsByClassName(this.getClass('edit-button'))[0] as HTMLElement;
       const content = message.getContent();
 
       if (typeof content === 'object' && content.type === 'audio') {
@@ -386,7 +386,7 @@ class Durenchat {
   private editMessage() {
     if (this.contextMenuMessage) {
       const message = this.getMessage(this.contextMenuMessage.getId());
-      const inputText = this.footerElement?.querySelector('.input-text') as HTMLInputElement;
+      const inputText = this.footerElement?.querySelector(this.getClass('.input-text')) as HTMLInputElement;
 
       this.editingMessage = message;
 
@@ -399,7 +399,7 @@ class Durenchat {
           inputText.value = content.caption;
         }
 
-        let cancelSpan = this.footerElement?.querySelector('.cancel-span') as HTMLElement;
+        let cancelSpan = this.footerElement?.querySelector(this.getClass('.input-text')) as HTMLElement;
         if (!cancelSpan) {
           cancelSpan = document.createElement('span');
           this.addClass(cancelSpan, 'cancel-span');
@@ -783,7 +783,7 @@ class Durenchat {
         this.editingMessage = null;
         inputText.value = '';
 
-        const cancelSpan = this.footerElement?.querySelector('.cancel-span') as HTMLElement;
+        const cancelSpan = this.footerElement?.querySelector(this.getClass('.cancel-span')) as HTMLElement;
         if (cancelSpan) {
             cancelSpan.style.display = 'none';
         }
@@ -963,6 +963,17 @@ class Durenchat {
     const prefix = this.prefix ? `${this.prefix}-` : '';
 
     element.classList.remove(`${prefix}${className}`);
+  }
+
+  /**
+   * Obtém o nome da classe com o prefixo.
+   * @param className - Nome da classe.
+   * @returns O nome da classe com o prefixo.
+   */
+  private getClass(className: string) {
+    const prefix = this.prefix ? `${this.prefix}-` : '';
+
+    return `${prefix}${className}`;
   }
 }
 
